@@ -9,6 +9,7 @@
 #include <string>
 #include <sstream>
 
+#include "Terrain.h"
 #include "Cube.h"
 #include "Camera.h"
 
@@ -48,22 +49,30 @@ int main() {
     // Create Assets
     Cube cube1 = Cube();
     Cube cube2 = Cube(glm::vec3(1.f));
+    Terrain terrain1 = Terrain();
 
     // Load the shader program
     Shader shaderProgram = Shader("VertexShader.glsl", "FragmentShader.glsl");
 
     // Set up vertex buffer object and vertex array object
     VAO VAO1 = VAO();
-    VBO VBO1 = VBO(cube1.vertices, sizeof(cube1.vertices));
+    VBO VBOCube = VBO(cube1.vertices, sizeof(cube1.vertices));
+    //VBO VBOTerrain = VBO(terrain1.vertices, sizeof(terrain1.vertices));
+    
     VAO1.Bind();
-    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+    VAO1.LinkAttrib(VBOCube, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+    //VAO1.LinkAttrib(VBOTerrain, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
 
     // Generate and bind an Element Buffer Object
-    EBO EBO1 = EBO(cube1.indices, sizeof(cube1.indices));
+    EBO EBOCube = EBO(cube1.indices, sizeof(cube1.indices));
+    //EBO EBOTerrain = EBO(terrain1.indices, sizeof(terrain1.indices));
 
     VAO1.Unbind();
-    VBO1.Unbind();
-    EBO1.Unbind();
+    VBOCube.Unbind();
+    //VBOTerrain.Unbind();
+
+    EBOCube.Unbind();
+    //EBOTerrain.Unbind();
 
     // Create the camera
     Camera camera = Camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f), &shaderProgram.ID);
@@ -118,8 +127,9 @@ int main() {
 
     // De-allocate resources
     VAO1.Delete();
-    VBO1.Delete();
-    EBO1.Delete();
+    VBOCube.Delete();
+    //VBOTerrain.Delete();
+    EBOCube.Delete();
     shaderProgram.Delete();
 
     // Terminate GLFW

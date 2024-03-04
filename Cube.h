@@ -1,8 +1,10 @@
 #pragma once
+#ifndef CUBE_CLASS_H
+#define CUBE_CLASS_H
+
 #include <glew.h>
 #include <glfw3.h>
 #include <glm.hpp>
-
 
 class Cube
 {
@@ -43,3 +45,5 @@ public:
 private:
 	glm::vec3 cubeCenter;
 };
+
+#endif // !CUBE_CLASS_H
