@@ -49,7 +49,7 @@ int main() {
     // Create Assets
     Cube cube1 = Cube();
     Cube cube2 = Cube(glm::vec3(1.f));
-    Terrain terrain1 = Terrain();
+    Terrain terrain1 = Terrain(glm::vec3(0), glm::vec3(6));
 
     // Load the shader program
     Shader shaderProgram = Shader("VertexShader.glsl", "FragmentShader.glsl");
@@ -57,19 +57,16 @@ int main() {
     // Set up vertex buffer object and vertex array object
     VAO VAO1 = VAO();
     VBO VBOCube = VBO(cube1.vertices, sizeof(cube1.vertices));
-    //VBO VBOTerrain = VBO(terrain1.vertices, sizeof(terrain1.vertices));
     
     VAO1.Bind();
     VAO1.LinkAttrib(VBOCube, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-    //VAO1.LinkAttrib(VBOTerrain, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
 
     // Generate and bind an Element Buffer Object
     EBO EBOCube = EBO(cube1.indices, sizeof(cube1.indices));
-    //EBO EBOTerrain = EBO(terrain1.indices, sizeof(terrain1.indices));
 
     VAO1.Unbind();
     VBOCube.Unbind();
-    //VBOTerrain.Unbind();
+    //terrain1.Unbind();
 
     EBOCube.Unbind();
     //EBOTerrain.Unbind();
@@ -111,6 +108,10 @@ int main() {
         cube1.Draw(&shaderProgram.ID, &VAO1.ID);
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 0.0f);
         cube2.Draw(&shaderProgram.ID, &VAO1.ID);
+
+        // Draw the terrain
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 0.0f, 1.0f);
+        terrain1.Draw(shaderProgram.ID);
 
         // Camera
         camera.Inputs(window);
