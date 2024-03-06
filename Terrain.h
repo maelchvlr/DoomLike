@@ -1,5 +1,10 @@
+#pragma once
 #ifndef TERRAIN_H
 #define TERRAIN_H
+
+#include "VAO.h"
+#include "VBO.h"
+#include "EBO.h"
 
 #include <GLEW.h> // Include OpenGL loader library
 #include <glm.hpp> // Include OpenGL Mathematics library
@@ -12,7 +17,11 @@ public:
     void Draw(GLuint shaderProgram); // Method to draw the terrain
 
 private:
-    GLuint VAO, VBO, EBO; // OpenGL IDs for vertex array, vertex buffer, and element buffer objects
+    // OpenGL IDs for vertex array, vertex buffer, and element buffer objects
+    VAO VAOTerrain;
+    VBO VBOTerrain;
+    EBO EBOTerrain;
+
     glm::vec3 topLeft; // Center of the terrain
     glm::vec3 scale; // Scale of the terrain
     //void setupMesh() je sais pas trop ce qu'on peut en faire ?

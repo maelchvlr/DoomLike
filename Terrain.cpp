@@ -1,4 +1,5 @@
 #include "Terrain.h"
+
 #include <vector>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
@@ -26,36 +27,29 @@ Terrain::Terrain(glm::vec3 inTopLeft, glm::vec3 inScale) {
     // Set the scale of the terrain
     scale = inScale;
 
-    // Set the vertices and indices
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    // Set the vertices indices and buffer
+    VAOTerrain = VAO();
+    VBOTerrain = VBO(vertices, sizeof(vertices));
 
-    glBindVertexArray(VAO);
+    VAOTerrain.Bind();
+    VAOTerrain.LinkAttrib(VBOTerrain, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // Position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    EBOTerrain = EBO(indices, sizeof(indices));
 
     // Texture Coord attribute (plus tard du coup)
     //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     //glEnableVertexAttribArray(1);
 
-    // Unbind VAO
-    glBindVertexArray(0);
+    VAOTerrain.Unbind();
+    VBOTerrain.Unbind();
+    EBOTerrain.Unbind();
 }
 
 Terrain::~Terrain() {
     // Cleanup
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    VAOTerrain.Delete();
+    VBOTerrain.Delete();
+    EBOTerrain.Delete();
 }
 
 void Terrain::Draw(GLuint shaderProgram) {
@@ -63,7 +57,7 @@ void Terrain::Draw(GLuint shaderProgram) {
     glm::mat4 model = glm::translate(glm::mat4(1.0f), topLeft);
     model = glm::scale(model, scale);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
-    glBindVertexArray(VAO);
+    VAOTerrain.Bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+    VAOTerrain.Unbind();
 }

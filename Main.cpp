@@ -54,23 +54,6 @@ int main() {
     // Load the shader program
     Shader shaderProgram = Shader("VertexShader.glsl", "FragmentShader.glsl");
 
-    // Set up vertex buffer object and vertex array object
-    VAO VAO1 = VAO();
-    VBO VBOCube = VBO(cube1.vertices, sizeof(cube1.vertices));
-    
-    VAO1.Bind();
-    VAO1.LinkAttrib(VBOCube, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-
-    // Generate and bind an Element Buffer Object
-    EBO EBOCube = EBO(cube1.indices, sizeof(cube1.indices));
-
-    VAO1.Unbind();
-    VBOCube.Unbind();
-    //terrain1.Unbind();
-
-    EBOCube.Unbind();
-    //EBOTerrain.Unbind();
-
     // Create the camera
     Camera camera = Camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f), &shaderProgram.ID);
     
@@ -105,9 +88,9 @@ int main() {
 
 		// Draw the cube(s)
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 1.0f, 0.0f);
-        cube1.Draw(&shaderProgram.ID, &VAO1.ID);
+        cube1.Draw(&shaderProgram.ID);
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 0.0f);
-        cube2.Draw(&shaderProgram.ID, &VAO1.ID);
+        cube2.Draw(&shaderProgram.ID);
 
         // Draw the terrain
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 0.0f, 1.0f);
@@ -127,10 +110,6 @@ int main() {
 	}   
 
     // De-allocate resources
-    VAO1.Delete();
-    VBOCube.Delete();
-    //VBOTerrain.Delete();
-    EBOCube.Delete();
     shaderProgram.Delete();
 
     // Terminate GLFW
