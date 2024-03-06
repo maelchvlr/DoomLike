@@ -55,10 +55,10 @@ Cube::~Cube()
 	EBOCube.Delete();
 }
 
-void Cube::Draw(GLuint *shaderProgram)
+void Cube::Draw(Shader *shaderProgram)
 {
 	glm::mat4 model = glm::translate(glm::mat4(1.0f), cubeCenter);
-	glUniformMatrix4fv(glGetUniformLocation(*shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram->ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	VAOCube.Bind();
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     VAOCube.Unbind();

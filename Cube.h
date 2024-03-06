@@ -6,6 +6,8 @@
 #include "VBO.h"
 #include "EBO.h"
 
+#include "Shader.h"
+
 #include <glew.h>
 #include <glfw3.h>
 #include <glm.hpp>
@@ -16,7 +18,7 @@ public:
 	explicit Cube(glm::vec3 center = glm::vec3(0.f));
 	~Cube();
 
-	void Draw(GLuint *shaderProgram);
+	void Draw(Shader *shaderProgram);
 
 private:
     // OpenGL IDs for vertex array, vertex buffer, and element buffer objects

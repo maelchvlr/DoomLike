@@ -8,13 +8,14 @@
 
 #include <GLEW.h> // Include OpenGL loader library
 #include <glm.hpp> // Include OpenGL Mathematics library
+#include "Texture.h"
 
 class Terrain {
 public:
     explicit Terrain(glm::vec3 inCenter = glm::vec3(0), glm::vec3 inTopLeft = glm::vec3(1));  // Constructor to set up the terrain data
     ~Terrain(); // Destructor for cleanup
 
-    void Draw(GLuint shaderProgram); // Method to draw the terrain
+    void Draw(Shader *shaderProgram); // Method to draw the terrain
 
 private:
     // OpenGL IDs for vertex array, vertex buffer, and element buffer objects

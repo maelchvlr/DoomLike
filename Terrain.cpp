@@ -46,7 +46,7 @@ Terrain::~Terrain() {
     EBOTerrain.Delete();
 }
 
-void Terrain::Draw(GLuint shaderProgram) {
+void Terrain::Draw(Shader *shaderProgram) {
     
     //Implémenter la matrice de translation en dehors de la fonction draw
     // l'initialiser soit lors de la création de l'objet, soit lors 
@@ -58,8 +58,9 @@ void Terrain::Draw(GLuint shaderProgram) {
 
     glm::mat4 model = glm::translate(translation, topLeft * scale);
     model = glm::scale(model, scale);
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram->ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
     VAOTerrain.Bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     VAOTerrain.Unbind();
 }
+

@@ -9,7 +9,9 @@
 #include <string>
 #include <sstream>
 
+#define STB_IMAGE_IMPLEMENTATION
 #include "Terrain.h"
+#include "Texture.h"
 #include "Cube.h"
 #include "Camera.h"
 
@@ -45,6 +47,9 @@ int main() {
         std::cout << "Failed to initialize GLEW" << std::endl;
     else
         std::cout << "GLEW initialized" << std::endl;
+
+    // Create textures
+    Texture texture = Texture("ressources/textures/dirt.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 
     // Create Assets
     Cube cube1 = Cube();
@@ -89,16 +94,19 @@ int main() {
 
 		// Draw the cube(s)
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 1.0f, 0.0f);
-        cube1.Draw(&shaderProgram.ID);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 0.75f, 0.0f);
-        cube2.Draw(&shaderProgram.ID);
+        cube1.Draw(&shaderProgram);
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 0.0f);
+        cube2.Draw(&shaderProgram);
+
 
         // Draw the terrain(s)
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 0.0f, 1.0f);
-        terrain1.Draw(shaderProgram.ID);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 0.0f, 0.75f);
-        terrain2.Draw(shaderProgram.ID);
-
+        texture.texUnit(shaderProgram, "tex0", 0);
+        glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 1);
+        texture.Bind();
+        terrain1.Draw(&shaderProgram);
+        texture.Unbind();
+        glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 0);
 
         // Camera
         camera.Inputs(window);
