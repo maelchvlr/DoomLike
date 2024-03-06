@@ -4,7 +4,7 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-Terrain::Terrain(glm::vec3 inTopLeft, glm::vec3 inScale) {
+Terrain::Terrain(glm::vec3 inTopLeft, glm::vec3 inScale): topLeft(inTopLeft), scale(inScale) {
     // Generation of a simple flat terrain
     // Define vertices for a flat grid
     float vertices[] = {
@@ -20,12 +20,6 @@ Terrain::Terrain(glm::vec3 inTopLeft, glm::vec3 inScale) {
         0, 1, 2, // First Triangle
         2, 3, 0  // Second Triangle
     };
-
-    // Set the center of the terrain
-    topLeft = inTopLeft;
-
-    // Set the scale of the terrain
-    scale = inScale;
 
     // Set the vertices indices and buffer
     VAOTerrain = VAO();
@@ -54,7 +48,15 @@ Terrain::~Terrain() {
 
 void Terrain::Draw(GLuint shaderProgram) {
     
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), topLeft);
+    //Implémenter la matrice de translation en dehors de la fonction draw
+    // l'initialiser soit lors de la création de l'objet, soit lors 
+    // de l'appel de la fonction draw dans le while
+    glm::mat4 translation = glm::mat4(1.0f);
+    translation[0].x = 1.0f;
+    translation[1].y = 0.0f;
+    translation[2].z = 1.0f;
+
+    glm::mat4 model = glm::translate(translation, topLeft * scale);
     model = glm::scale(model, scale);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
     VAOTerrain.Bind();

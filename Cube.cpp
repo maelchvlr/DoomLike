@@ -5,7 +5,7 @@
 
 Cube::Cube(glm::vec3 center)
 {
-    GLuint indices[36] = {
+    GLuint indices[] = {
         //Indices
         0, 1, 2,
         1, 2, 3,
@@ -21,7 +21,7 @@ Cube::Cube(glm::vec3 center)
         3, 5, 7
     };
 
-    GLfloat vertices[36] = {
+    GLfloat vertices[] = {
         //Position
         -0.5f, -0.5f, -0.5f,
          0.0f, -0.5f, -0.5f,

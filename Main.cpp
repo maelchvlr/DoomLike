@@ -50,6 +50,7 @@ int main() {
     Cube cube1 = Cube();
     Cube cube2 = Cube(glm::vec3(1.f));
     Terrain terrain1 = Terrain(glm::vec3(0), glm::vec3(6));
+    Terrain terrain2 = Terrain(glm::vec3(1), glm::vec3(6));
 
     // Load the shader program
     Shader shaderProgram = Shader("VertexShader.glsl", "FragmentShader.glsl");
@@ -89,12 +90,15 @@ int main() {
 		// Draw the cube(s)
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 1.0f, 0.0f);
         cube1.Draw(&shaderProgram.ID);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 0.0f);
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 0.75f, 0.0f);
         cube2.Draw(&shaderProgram.ID);
 
-        // Draw the terrain
+        // Draw the terrain(s)
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 0.0f, 1.0f);
         terrain1.Draw(shaderProgram.ID);
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 0.0f, 0.75f);
+        terrain2.Draw(shaderProgram.ID);
+
 
         // Camera
         camera.Inputs(window);
@@ -111,6 +115,9 @@ int main() {
 
     // De-allocate resources
     shaderProgram.Delete();
+    cube1.~Cube();
+    cube2.~Cube();
+    terrain1.~Terrain();
 
     // Terminate GLFW
     glfwTerminate();
