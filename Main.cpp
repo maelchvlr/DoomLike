@@ -95,9 +95,14 @@ int main() {
 		// Draw the cube(s)
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 1.0f, 0.0f);
         cube1.Draw(&shaderProgram);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 0.0f);
-        cube2.Draw(&shaderProgram);
 
+
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 0.0f);
+        //glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 1);
+        //texture.Bind();
+        cube2.Draw(&shaderProgram);
+        //texture.Unbind();
+        //glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 0);
 
         // Draw the terrain(s)
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 0.0f, 1.0f);

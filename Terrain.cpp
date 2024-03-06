@@ -26,13 +26,9 @@ Terrain::Terrain(glm::vec3 inTopLeft, glm::vec3 inScale): topLeft(inTopLeft), sc
     VBOTerrain = VBO(vertices, sizeof(vertices));
 
     VAOTerrain.Bind();
-    VAOTerrain.LinkAttrib(VBOTerrain, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+    VAOTerrain.LinkAttrib(VBOTerrain, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0, true);
 
     EBOTerrain = EBO(indices, sizeof(indices));
-
-    // Texture Coord attribute (plus tard du coup)
-    //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    //glEnableVertexAttribArray(1);
 
     VAOTerrain.Unbind();
     VBOTerrain.Unbind();

@@ -23,7 +23,7 @@ Cube::Cube(glm::vec3 center)
 
     GLfloat vertices[] = {
         //Position
-        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f, 
          0.0f, -0.5f, -0.5f,
         -0.5f,  0.0f, -0.5f,
          0.0f,  0.0f, -0.5f,
@@ -39,7 +39,7 @@ Cube::Cube(glm::vec3 center)
     VBOCube = VBO(vertices, sizeof(vertices));
     
     VAOCube.Bind();
-    VAOCube.LinkAttrib(VBOCube, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+    VAOCube.LinkAttrib(VBOCube, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0, false);
     
     EBOCube = EBO(indices, sizeof(indices));
 
