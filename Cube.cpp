@@ -3,7 +3,7 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-Cube::Cube(glm::vec3 center)
+Cube::Cube(RigidBody rb, glm::vec3 center) : rbCube(rb)
 {
     GLuint indices[] = {
         //Indices
@@ -33,7 +33,7 @@ Cube::Cube(glm::vec3 center)
          0.0f,  0.0f,  0.0f,
     };
 
-	cubeCenter = center;
+	rbCube.position = center;
     
     VAOCube = VAO();
     VBOCube = VBO(vertices, sizeof(vertices));
@@ -55,9 +55,10 @@ Cube::~Cube()
 	EBOCube.Delete();
 }
 
-void Cube::Draw(Shader *shaderProgram)
+void Cube::Draw(Shader *shaderProgram, float dt)
 {
-	glm::mat4 model = glm::translate(glm::mat4(1.0f), cubeCenter);
+    rbCube.update(dt);
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), rbCube.position);
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram->ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	VAOCube.Bind();
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);

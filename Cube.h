@@ -7,6 +7,7 @@
 #include "EBO.h"
 
 #include "Shader.h"
+#include "RigidBody.h"
 
 #include <glew.h>
 #include <glfw3.h>
@@ -15,16 +16,18 @@
 class Cube
 {
 public:
-	explicit Cube(glm::vec3 center = glm::vec3(0.f));
+	explicit Cube(RigidBody rb, glm::vec3 center = glm::vec3(0.f));
 	~Cube();
 
-	void Draw(Shader *shaderProgram);
+	void Draw(Shader *shaderProgram, float dt);
 
 private:
     // OpenGL IDs for vertex array, vertex buffer, and element buffer objects
     VAO VAOCube;
     VBO VBOCube;
     EBO EBOCube;
+
+	RigidBody rbCube;
 
 	glm::vec3 cubeCenter;
 };

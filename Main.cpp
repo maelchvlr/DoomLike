@@ -52,8 +52,11 @@ int main() {
     Texture texture = Texture("ressources/textures/dirt.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 
     // Create Assets
-    Cube cube1 = Cube();
-    Cube cube2 = Cube(glm::vec3(1.f));
+    RigidBody rb1 = RigidBody(1.0f, glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f));
+    RigidBody rb2 = RigidBody(1.0f, glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
+
+    Cube cube1 = Cube(rb1);
+    Cube cube2 = Cube(rb2, glm::vec3(1.f));
     Terrain terrain1 = Terrain(glm::vec3(0), glm::vec3(6));
     Terrain terrain2 = Terrain(glm::vec3(1), glm::vec3(6));
 
@@ -66,8 +69,16 @@ int main() {
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
 
+    double lastFrame = 0;
+    double deltaTime = 0;
+
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(window)) {
+        //Delta time = time between two frames
+        double currentTime = glfwGetTime();
+        deltaTime = currentTime - lastFrame;
+        lastFrame = currentTime;
+
         // Render clearing
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -94,13 +105,13 @@ int main() {
 
 		// Draw the cube(s)
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 1.0f, 0.0f);
-        cube1.Draw(&shaderProgram);
+        cube1.Draw(&shaderProgram, deltaTime);
 
 
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 0.0f);
         //glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 1);
         //texture.Bind();
-        cube2.Draw(&shaderProgram);
+        cube2.Draw(&shaderProgram, deltaTime);
         //texture.Unbind();
         //glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 0);
 
