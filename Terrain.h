@@ -6,7 +6,7 @@
 #include "VBO.h"
 #include "EBO.h"
 
-#include <GLEW.h> // Include OpenGL loader library
+#include <glew.h> // Include OpenGL loader library
 #include <glm.hpp> // Include OpenGL Mathematics library
 #include "Texture.h"
 

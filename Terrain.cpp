@@ -8,9 +8,7 @@ Terrain::Terrain(glm::vec3 inTopLeft, glm::vec3 inScale): topLeft(inTopLeft), sc
     // Generation of a simple flat terrain
     // Define vertices for a flat grid
     float vertices[] = {
-        // Positions        // Texture Coords (j'ai vu ça sur internet,
-                            //  j'imagine que c'est pour avoir une idée d'où commence et
-                            //  où termine une texture)
+        // Positions        // Texture Coords 
         0.0f, 0.0f, 0.0f,    0.0f, 0.0f,
         1.0f, 0.0f, 0.0f,    1.0f, 0.0f,
         1.0f, 0.0f, 1.0f,    1.0f, 1.0f,

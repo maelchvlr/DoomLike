@@ -49,14 +49,15 @@ int main() {
         std::cout << "GLEW initialized" << std::endl;
 
     // Create textures
-    Texture texture = Texture("ressources/textures/dirt.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+    Texture dirtTex = Texture("ressources/textures/dirt.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+    Texture crateTex = Texture("ressources/textures/crate.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 
     // Create Assets
     RigidBody rb1 = RigidBody(1.0f, glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f));
     RigidBody rb2 = RigidBody(1.0f, glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(0.0f));
 
     Cube cube1 = Cube(rb1);
-    Cube cube2 = Cube(rb2, glm::vec3(1.f));
+    Cube cube2 = Cube(rb2, glm::vec3(1.f), true, &crateTex);
     Terrain terrain1 = Terrain(glm::vec3(0), glm::vec3(6));
     Terrain terrain2 = Terrain(glm::vec3(1), glm::vec3(6));
 
@@ -109,19 +110,16 @@ int main() {
 
 
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 0.0f);
-        //glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 1);
-        //texture.Bind();
-        cube2.Draw(&shaderProgram, deltaTime);
-        //texture.Unbind();
-        //glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 0);
+        cube2.Draw(&shaderProgram, 0.f);
+
 
         // Draw the terrain(s)
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 0.0f, 1.0f);
-        texture.texUnit(shaderProgram, "tex0", 0);
+        dirtTex.texUnit(shaderProgram, "tex0", 0);
         glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 1);
-        texture.Bind();
+        dirtTex.Bind();
         terrain1.Draw(&shaderProgram);
-        texture.Unbind();
+        dirtTex.Unbind();
         glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 0);
 
         // Camera

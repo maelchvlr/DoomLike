@@ -8,6 +8,7 @@
 
 #include "Shader.h"
 #include "RigidBody.h"
+#include "Texture.h"
 
 #include <glew.h>
 #include <glfw3.h>
@@ -16,7 +17,7 @@
 class Cube
 {
 public:
-	explicit Cube(RigidBody rb, glm::vec3 center = glm::vec3(0.f));
+	explicit Cube(RigidBody rb, glm::vec3 center = glm::vec3(0.f), bool _Textured = false, Texture* _Texture = nullptr);
 	~Cube();
 
 	void Draw(Shader *shaderProgram, float dt);
@@ -26,6 +27,13 @@ private:
     VAO VAOCube;
     VBO VBOCube;
     EBO EBOCube;
+
+
+	// Texture for the cube
+	bool textured;
+	Texture* texture;
+
+	// Rigid body for the cube
 
 	RigidBody rbCube;
 
