@@ -55,9 +55,15 @@ int main() {
     Texture dirtTex = Texture("ressources/textures/dirt.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
     Texture crateTex = Texture("ressources/textures/crate.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 
-    Cube cube1 = Cube(glm::vec3(1.9,6,1));
+    Cube cube1 = Cube(glm::vec3(1.4, 4, 1), glm::vec3(1), true, &crateTex, 0.1f, 1);
     Cube cube2 = Cube(glm::vec3(1,4,1), glm::vec3(1), true, &crateTex, 0.5f);
-    Terrain terrain1 = Terrain(glm::vec3(0, -4, 0), glm::vec3(6, 0, 6), false, nullptr, 50.0f, 0.7);
+
+    Cube cube3 = Cube(glm::vec3(3, 4, 3), glm::vec3(1), true, &crateTex, 2.f, 0);
+
+    Cube cube4 = Cube(glm::vec3(3, 4, 1), glm::vec3(1), true, &crateTex, 0.05f);
+
+
+    Terrain terrain1 = Terrain(glm::vec3(0, -4, 0), glm::vec3(6, 0, 6), false, nullptr, 50.0f, 0.5);
 
     // Load the shader program
     Shader shaderProgram = Shader("VertexShader.glsl", "FragmentShader.glsl");
@@ -106,9 +112,14 @@ int main() {
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 1.0f, 0.0f);
         cube1.Draw(&shaderProgram, deltaTime);
 
-
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 0.0f);
         cube2.Draw(&shaderProgram, deltaTime);
+
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 1.0f);
+        cube3.Draw(&shaderProgram, deltaTime);
+
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 1.0f, 1.0f);
+        cube4.Draw(&shaderProgram, deltaTime);
 
 
         // Draw the terrain(s)
@@ -127,6 +138,8 @@ int main() {
         handlePredictiveCollision(cube2, terrain1, deltaTime, "cube2 terrain");
         handlePredictiveCollision(cube1, terrain1, deltaTime, "cube1 terrain");
         handlePredictiveCollision(cube1, cube2, deltaTime, "cube1 cube2");
+        handlePredictiveCollision(cube3, terrain1, deltaTime, "cube3 terrain1");
+        handlePredictiveCollision(cube4, terrain1, deltaTime, "cube4 terrain1");
 
         // Camera
         camera.Inputs(window);
@@ -145,6 +158,8 @@ int main() {
     shaderProgram.Delete();
     cube1.~Cube();
     cube2.~Cube();
+    cube3.~Cube();
+    cube4.~Cube();
     terrain1.~Terrain();
 
     // Terminate GLFW
