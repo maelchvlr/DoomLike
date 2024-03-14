@@ -4,8 +4,9 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-Terrain::Terrain(glm::vec3 inTopLeft, glm::vec3 inScale): topLeft(inTopLeft), scale(inScale) {
-    // Generation of a simple flat terrain
+Terrain::Terrain( glm::vec3 topLeft, glm::vec3 inScale, bool _Textured, Texture* _Texture, float mass)
+    : Models(mass, _Textured, _Texture, topLeft), scale(inScale)
+{
     // Define vertices for a flat grid
     float vertices[] = {
         // Positions        // Texture Coords 
@@ -19,42 +20,29 @@ Terrain::Terrain(glm::vec3 inTopLeft, glm::vec3 inScale): topLeft(inTopLeft), sc
         2, 3, 0  // Second Triangle
     };
 
-    // Set the vertices indices and buffer
-    VAOTerrain = VAO();
-    VBOTerrain = VBO(vertices, sizeof(vertices));
-
-    VAOTerrain.Bind();
-    VAOTerrain.LinkAttrib(VBOTerrain, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0, true);
-
-    EBOTerrain = EBO(indices, sizeof(indices));
-
-    VAOTerrain.Unbind();
-    VBOTerrain.Unbind();
-    EBOTerrain.Unbind();
+    Models::init(vertices, sizeof(vertices), indices, sizeof(indices));
 }
 
 Terrain::~Terrain() {
-    // Cleanup
-    VAOTerrain.Delete();
-    VBOTerrain.Delete();
-    EBOTerrain.Delete();
+    Models::~Models();
 }
 
-void Terrain::Draw(Shader *shaderProgram) {
-    
+void Terrain::Draw(Shader *shaderProgram, float dt) {
+
+    rb.update(dt);
     //Implémenter la matrice de translation en dehors de la fonction draw
     // l'initialiser soit lors de la création de l'objet, soit lors 
     // de l'appel de la fonction draw dans le while
-    glm::mat4 translation = glm::mat4(1.0f);
+  /*  glm::mat4 translation = glm::mat4(1.0f);
     translation[0].x = 1.0f;
     translation[1].y = 0.0f;
-    translation[2].z = 1.0f;
+    translation[2].z = 1.0f;*/
 
-    glm::mat4 model = glm::translate(translation, topLeft * scale);
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), rb.position * scale);
     model = glm::scale(model, scale);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram->ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-    VAOTerrain.Bind();
+    VAOModel.Bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    VAOTerrain.Unbind();
+    VAOModel.Unbind();
 }
 

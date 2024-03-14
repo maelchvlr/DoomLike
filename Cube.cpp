@@ -3,7 +3,8 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-Cube::Cube(RigidBody rb, glm::vec3 center, bool _Textured, Texture* _Texture) : rbCube(rb)
+Cube::Cube(glm::vec3 center, bool _Textured, Texture* _Texture, float mass)
+    : Models(mass, _Textured, _Texture, center)
 {
     GLuint indices[] = {
         // Front face
@@ -58,35 +59,18 @@ Cube::Cube(RigidBody rb, glm::vec3 center, bool _Textured, Texture* _Texture) : 
           -0.5f, -0.5f,  0.5f,  0.0f, 1.0f  // Top-left
     };
 
-    textured = _Textured;
-    texture = _Texture;
-
-	rbCube.position = center;
-    
-    VAOCube = VAO();
-    VBOCube = VBO(vertices, sizeof(vertices));
-    
-    VAOCube.Bind();
-    VAOCube.LinkAttrib(VBOCube, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0, true);
-    
-    EBOCube = EBO(indices, sizeof(indices));
-
-    VAOCube.Unbind();
-    VBOCube.Unbind();
-    EBOCube.Unbind();
+    Models::init(vertices, sizeof(vertices), indices, sizeof(indices));
 }
 
 Cube::~Cube()
 {
-    VAOCube.Delete();
-	VBOCube.Delete();
-	EBOCube.Delete();
+    Models::~Models();
 }
 
 void Cube::Draw(Shader *shaderProgram, float dt)
 {
-    rbCube.update(dt);
-	glm::mat4 model = glm::translate(glm::mat4(1.0f), rbCube.position);
+    rb.update(dt);
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), rb.position);
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram->ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
     if(textured)
     {
@@ -95,9 +79,9 @@ void Cube::Draw(Shader *shaderProgram, float dt)
         texture->Bind();
     }
 
-	VAOCube.Bind();
+	VAOModel.Bind();
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    VAOCube.Unbind();
+    VAOModel.Unbind();
 
     if (textured)
     {
