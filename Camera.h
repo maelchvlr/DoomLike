@@ -5,6 +5,7 @@
 #include <glew.h>
 #include <glfw3.h>
 #include <glm.hpp>
+#include "RigidBody.h"
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 #include <gtx/rotate_vector.hpp>
@@ -16,6 +17,8 @@ public:
 	glm::vec3 Position;
 	glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
+
+	RigidBody rb;
 
 	bool firstClick = true;
 

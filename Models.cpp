@@ -1,7 +1,7 @@
 #include "Models.h"
 
-Models::Models(float mass, bool _Textured, Texture* _Texture, glm::vec3 center) 
-	: rb (mass, center, glm::vec3(0.0f), glm::vec3(0.0f))
+Models::Models(float mass, float restitution, bool movable, bool _Textured, Texture* _Texture, glm::vec3 center, glm::vec3 size) 
+	: rb (mass, restitution, movable, size, center, glm::vec3(0.0f), glm::vec3(0.0f))
 {
 	textured = _Textured;
 	texture = _Texture;

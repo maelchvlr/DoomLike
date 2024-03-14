@@ -3,8 +3,8 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-Cube::Cube(glm::vec3 center, bool _Textured, Texture* _Texture, float mass)
-    : Models(mass, _Textured, _Texture, center)
+Cube::Cube(glm::vec3 center, glm::vec3 _size, bool _Textured, Texture* _Texture, float mass, float restitution, bool movable)
+    : Models(mass, restitution, movable, _Textured, _Texture, center, _size)
 {
     GLuint indices[] = {
         // Front face

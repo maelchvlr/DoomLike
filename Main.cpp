@@ -12,6 +12,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Terrain.h"
 #include "Texture.h"
+#include "Models.h"
 #include "Cube.h"
 #include "Camera.h"
 
@@ -19,6 +20,8 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
+
+#include "Collision.h"
 
 const unsigned int width = 800;
 const unsigned int height = 800;
@@ -52,10 +55,9 @@ int main() {
     Texture dirtTex = Texture("ressources/textures/dirt.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
     Texture crateTex = Texture("ressources/textures/crate.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 
-    Cube cube1 = Cube();
-    Cube cube2 = Cube(glm::vec3(1.f), true, &crateTex, 0.0f);
-    Terrain terrain1 = Terrain(glm::vec3(0), glm::vec3(6));
-    Terrain terrain2 = Terrain(glm::vec3(1), glm::vec3(6));
+    Cube cube1 = Cube(glm::vec3(1.9,6,1));
+    Cube cube2 = Cube(glm::vec3(1,4,1), glm::vec3(1), true, &crateTex, 0.5f);
+    Terrain terrain1 = Terrain(glm::vec3(0, -4, 0), glm::vec3(6, 0, 6), false, nullptr, 50.0f, 0.7);
 
     // Load the shader program
     Shader shaderProgram = Shader("VertexShader.glsl", "FragmentShader.glsl");
@@ -117,6 +119,14 @@ int main() {
         terrain1.Draw(&shaderProgram, deltaTime);
         dirtTex.Unbind();
         glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 0);
+
+        // handle camera collisions
+        handleCameraCollision(camera.rb, terrain1, deltaTime, "camera terrain");
+
+        //handleCollisions
+        handlePredictiveCollision(cube2, terrain1, deltaTime, "cube2 terrain");
+        handlePredictiveCollision(cube1, terrain1, deltaTime, "cube1 terrain");
+        handlePredictiveCollision(cube1, cube2, deltaTime, "cube1 cube2");
 
         // Camera
         camera.Inputs(window);

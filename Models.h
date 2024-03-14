@@ -13,13 +13,14 @@
 class Models
 {
 public:
-	RigidBody rb;
+	
 
-	Models(float mass, bool _Textured = false, Texture* _Texture = nullptr, glm::vec3 center = glm::vec3(0));
+	Models(float mass, float restitution, bool movable, bool _Textured = false, Texture* _Texture = nullptr, glm::vec3 center = glm::vec3(0), glm::vec3 size = glm::vec3(1));
 	~Models();
 
 	void init(GLfloat* vertices, int sizeVer, GLuint indices[], int sizeInd);
 	virtual void Draw(Shader* shaderProgram, float dt);
+	virtual RigidBody* getRigidBody() { return &rb; }
 	//virtual void render(Shader shader, float dt);
 
 protected:
@@ -27,6 +28,9 @@ protected:
 	VAO VAOModel;
 	VBO VBOModel;
 	EBO EBOModel;
+
+	//rigid body
+	RigidBody rb;
 
 	// Texture for the model
 	bool textured;

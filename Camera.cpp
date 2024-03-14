@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera(int width, int height, glm::vec3 position, GLuint *shaderProgram)
+Camera::Camera(int width, int height, glm::vec3 position, GLuint *shaderProgram) : rb(RigidBody(0.0f, 0.0f, false, glm::vec3(0.5, 1, 0.5), Position, glm::vec3(0.0f)))
 {
 	shader = *shaderProgram;
 	Camera::width = width;
@@ -69,6 +69,8 @@ void Camera::Inputs(GLFWwindow* window) {
 		Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
 
 		glfwSetCursorPos(window, (width / 2), (height / 2));
+
+		rb.position = Position;
 	}
 	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
