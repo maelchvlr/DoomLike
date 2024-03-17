@@ -55,13 +55,11 @@ int main() {
     Texture dirtTex = Texture("ressources/textures/dirt.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
     Texture crateTex = Texture("ressources/textures/crate.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 
-    Cube cube1 = Cube(glm::vec3(1.4, 4, 1), glm::vec3(1), true, &crateTex, 0.1f, 1);
-    Cube cube2 = Cube(glm::vec3(1,4,1), glm::vec3(1), true, &crateTex, 0.5f);
-
-    Cube cube3 = Cube(glm::vec3(3, 4, 3), glm::vec3(1), true, &crateTex, 2.f, 0);
-
-    Cube cube4 = Cube(glm::vec3(3, 4, 1), glm::vec3(1), true, &crateTex, 0.05f);
-
+    // Create the models
+    Cube cube1 = Cube(glm::vec3(1.4, 4,   1), glm::vec3(1), true, &crateTex, 0.1f, 1);
+    Cube cube2 = Cube(glm::vec3(1,   3,   1), glm::vec3(1), true, &crateTex, 0.5f);
+    Cube cube3 = Cube(glm::vec3(3,   4,   3), glm::vec3(1), true, &crateTex, 2.f, 0);
+    Cube cube4 = Cube(glm::vec3(3,   4,   1), glm::vec3(1), true, &crateTex, 0.05f);
 
     Terrain terrain1 = Terrain(glm::vec3(0, -4, 0), glm::vec3(6, 0, 6), false, nullptr, 50.0f, 0.5);
 
@@ -70,6 +68,10 @@ int main() {
 
     // Create the camera
     Camera camera = Camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f), &shaderProgram.ID);
+
+    // Create transformations
+    glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 projection = glm::mat4(1.0f);
     
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
@@ -91,10 +93,6 @@ int main() {
 
 		// Use the shader program
 		shaderProgram.Activate();
-
-        // Create transformations
-        glm::mat4 view = glm::mat4(1.0f);
-        glm::mat4 projection = glm::mat4(1.0f);
 
         // Camera/view transformation
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
@@ -152,7 +150,7 @@ int main() {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 			glfwSetWindowShouldClose(window, true);
 		}
-	}   
+	}
 
     // De-allocate resources
     shaderProgram.Delete();

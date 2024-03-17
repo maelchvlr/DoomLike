@@ -4,9 +4,7 @@
 
 RigidBody::RigidBody(float mass, float restitution, bool movable, glm::vec3 size, glm::vec3 position, glm::vec3 velocity, glm::vec3 acceleration, bool simulate)
 	: mass(mass), size(size), movable(movable), position(position), velocity(velocity), acceleration(acceleration), restitution(restitution) , simulate(simulate)
-{
-	
-}
+{}
 
 RigidBody::~RigidBody() {}
 
