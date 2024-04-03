@@ -4,10 +4,6 @@
 
 #include "Models.h"
 
-#include <glew.h>
-#include <glfw3.h>
-#include <glm.hpp>
-
 class Cube : public Models
 {
 public:

@@ -3,8 +3,6 @@
 #include <vector>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
-#include <fstream>
-#include <iostream>
 
 Terrain::Terrain( glm::vec3 topLeft, glm::vec3 _size, bool _Textured, Texture* _Texture, float mass, float restitution, bool movable)
     : Models(mass, restitution, movable, _Textured, _Texture, topLeft, _size), size(_size)

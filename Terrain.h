@@ -4,9 +4,6 @@
 
 #include "Models.h"
 
-#include <glew.h> // Include OpenGL loader library
-#include <glm.hpp> // Include OpenGL Mathematics library
-
 class Terrain : public Models
 {
 public:
