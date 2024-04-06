@@ -4,15 +4,15 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-Terrain::Terrain( glm::vec3 topLeft, glm::vec3 _size, bool _Textured, Texture* _Texture, float mass, float restitution, bool movable)
+Terrain::Terrain(std::string path, glm::vec3 topLeft, glm::vec3 _size, bool _Textured, Texture* _Texture, float mass, float restitution, bool movable)
     : Models(mass, restitution, movable, _Textured, _Texture, topLeft, _size), size(_size)
 {
-    std::ifstream fichier("./ressources/map/tile01.txt");
-    const int taille = 20; //Taille de lecture défini à 20 car on récupère un Terrain, A CHANGER POUR LES AUTRES OBJETS
+    std::ifstream fichier(path);
+    const int taille = 20; //Taille de lecture défini à 20 car on récupère un Terrain, A CHANGER POUR LES AUTRES OBJETS / à faire dynamiquement
     float vertices[taille];
 
     if (fichier) {
-        std::cout << "Ouverture du fichier tile01.txt reussie !" << std::endl;
+        //std::cout << "Ouverture du fichier tile01.txt reussie !" << std::endl; //Debug purpose
 
         for (int i = 0; i < taille; i++) {  
             float valeur;
@@ -20,7 +20,7 @@ Terrain::Terrain( glm::vec3 topLeft, glm::vec3 _size, bool _Textured, Texture* _
 
             vertices[i] = valeur;
 
-            std::cout << valeur << std::endl;
+            //std::cout << valeur << std::endl; //Debug purpose
         }
         fichier.close();
     }
@@ -49,7 +49,6 @@ Terrain::~Terrain() {
 }
 
 void Terrain::Draw(Shader *shaderProgram, float dt) {
-
     rb.update(dt);
     glm::mat4 model = glm::translate(glm::mat4(1.0f), rb.position);
     model = glm::scale(model, size);

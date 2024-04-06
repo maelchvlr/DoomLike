@@ -72,6 +72,7 @@ void Cube::Draw(Shader *shaderProgram, float dt)
     rb.update(dt);
 	glm::mat4 model = glm::translate(glm::mat4(1.0f), rb.position);
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram->ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+
     if(textured)
     {
         texture->texUnit(*shaderProgram, "tex0", 0);
