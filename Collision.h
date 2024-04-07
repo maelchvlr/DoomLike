@@ -33,6 +33,7 @@ bool willCollide(RigidBody& rb1, RigidBody& rb2, float deltaTime) {
 void applyImpulse(RigidBody& rb1, RigidBody& rb2, const glm::vec3& collisionNormal) {
     // Calculate the relative velocity of the two models
     glm::vec3 relativeVelocity = abs(rb2.velocity - rb1.velocity);
+
     //dot product : x1*x2 + y1*y2 + z1*z2
     float velocityAlongNormal = glm::dot(relativeVelocity, collisionNormal);
 
@@ -41,7 +42,7 @@ void applyImpulse(RigidBody& rb1, RigidBody& rb2, const glm::vec3& collisionNorm
     //std::cout << "velocity along normal: " << velocityAlongNormal << std::endl;
 
     // They are moving apart, so no impulse is necessary
-    if (velocityAlongNormal > 0) return; 
+    if (velocityAlongNormal > 0) return;
 
     // Restitution depends of the bounciness of the object
     float restitution = std::min(rb1.restitution, rb2.restitution);
@@ -61,9 +62,7 @@ void applyImpulse(RigidBody& rb1, RigidBody& rb2, const glm::vec3& collisionNorm
 }
 
 // Handles collision detection and response using predictive logic
-void handlePredictiveCollision(Models& model1, Models& model2, float deltaTime, std::string tag) {
-    RigidBody* rb1 = model1.getRigidBody();
-    RigidBody* rb2 = model2.getRigidBody();
+void handlePredictiveCollision(RigidBody* rb1, RigidBody* rb2, float deltaTime, std::string tag) {
 
     if (willCollide(*rb1, *rb2, deltaTime)) {
         //std::cout << "collision detected between " << tag << std::endl;
@@ -73,15 +72,5 @@ void handlePredictiveCollision(Models& model1, Models& model2, float deltaTime, 
         rb2->startSimulate();
         glm::vec3 collisionNormal = calculateCollisionNormal(*rb1, *rb2);
         applyImpulse(*rb1, *rb2, collisionNormal);
-    }
-}
-
-void handleCameraCollision(RigidBody& camera, Models& model, float deltaTime, std::string tag) {
-    RigidBody* rbModel = model.getRigidBody();
-    if (willCollide(camera, *rbModel, deltaTime)) {
-        model.getRigidBody()->startSimulate();
-        std::cout << "collision detected between " << tag << std::endl;
-        glm::vec3 collisionNormal = calculateCollisionNormal(camera, *rbModel);
-        applyImpulse(camera, *rbModel, collisionNormal);
     }
 }

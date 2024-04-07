@@ -68,8 +68,8 @@ int main() {
     //Défini le path vers le dossier des terrains et itère dedans
     std::filesystem::path terrainPath = "./ressources/map/";
     for (const auto& terrain : std::filesystem::directory_iterator(terrainPath)) {
-        std::cout << terrain.path() << std::endl;
-        std::cout << terrain.path().string() << std::endl;
+        //std::cout << terrain.path() << std::endl;
+        //std::cout << terrain.path().string() << std::endl;    //Debug purpose to see the difference between path and string -> string = path without quotes ("")
         Terrain* newTerrain = new Terrain(terrain.path().string(), glm::vec3(0, -4, 0), glm::vec3(6, 0, 6), false, nullptr, 50.0f, 0.5);
         terrains.push_back(newTerrain);
     }
@@ -79,11 +79,7 @@ int main() {
     Shader shaderProgram = Shader("VertexShader.glsl", "FragmentShader.glsl");
 
     // Create the camera
-    Camera camera = Camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f), &shaderProgram.ID);
-
-    // Create transformations
-    glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 projection = glm::mat4(1.0f);
+    Camera* camera = new Camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f), &shaderProgram.ID);
 
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
@@ -93,7 +89,7 @@ int main() {
 
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(window)) {
-        //Delta time = time between two frames
+        // Delta time = time between two frames
         double currentTime = glfwGetTime();
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
@@ -106,28 +102,13 @@ int main() {
         // Use the shader program
         shaderProgram.Activate();
 
-        // Camera/view transformation
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
-
-        // Get the uniform locations
-        GLint viewLoc = glGetUniformLocation(shaderProgram.ID, "view");
-        GLint projectionLoc = glGetUniformLocation(shaderProgram.ID, "projection");
-
-        // Pass the matrices to the shader
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
         // Draw the cube(s)
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 1.0f, 0.0f);
         cube1.Draw(&shaderProgram, deltaTime);
-
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 0.0f);
         cube2.Draw(&shaderProgram, deltaTime);
-
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 1.0f);
         cube3.Draw(&shaderProgram, deltaTime);
-
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 1.0f, 1.0f);
         cube4.Draw(&shaderProgram, deltaTime);
 
@@ -144,22 +125,24 @@ int main() {
         dirtTex.Unbind();
         glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 0);
 
-        // handle camera collisions
+        // Handle collisions
         for (Terrain* terrain : terrains) {
-            handleCameraCollision(camera.rb, *terrain, deltaTime, "camera terrain");
+            // Camera x terrains
+            handlePredictiveCollision(camera->rb, terrain->getRigidBody(), deltaTime, "camera terrain");
 
-            //handleCollisions
-            handlePredictiveCollision(cube2, *terrain, deltaTime, "cube2 terrain");
-            handlePredictiveCollision(cube1, *terrain, deltaTime, "cube1 terrain");
-            handlePredictiveCollision(cube3, *terrain, deltaTime, "cube3 terrain1");
-            handlePredictiveCollision(cube4, *terrain, deltaTime, "cube4 terrain1");
+            // Cubes x terrains
+            handlePredictiveCollision(cube2.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube2 terrain");
+            handlePredictiveCollision(cube1.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube1 terrain");
+            handlePredictiveCollision(cube3.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube3 terrain1");
+            handlePredictiveCollision(cube4.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube4 terrain1");
         }
 
-        handlePredictiveCollision(cube1, cube2, deltaTime, "cube1 cube2");
+        // Cubes x Cubes collisions
+        handlePredictiveCollision(cube1.getRigidBody(), cube2.getRigidBody(), deltaTime, "cube1 cube2");
 
         // Camera
-        camera.Inputs(window);
-        camera.Matrix(45.0f, 0.1f, 100.0f, "camMatrix");
+        camera->Inputs(window);
+        camera->Matrix(45.0f, 0.1f, 100.0f, "camMatrix");
 
         glfwSwapBuffers(window);    // Swap front and back buffers
         glfwPollEvents();	        // Poll for and process events
@@ -179,7 +162,6 @@ int main() {
 
     for (auto terrain : terrains)
         terrain->~Terrain();
-
 
     // Terminate GLFW
     glfwTerminate();

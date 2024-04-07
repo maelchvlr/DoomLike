@@ -7,6 +7,9 @@
 Terrain::Terrain(std::string path, glm::vec3 topLeft, glm::vec3 _size, bool _Textured, Texture* _Texture, float mass, float restitution, bool movable)
     : Models(mass, restitution, movable, _Textured, _Texture, topLeft, _size), size(_size)
 {
+    std::cout << "Terrain size : " << size.x << " " << size.y << " " << size.z << std::endl;
+    std::cout << "Terrain rigid body size : " << rb.size.x << " " << rb.size.y << " " << rb.size.z << std::endl;
+
     std::ifstream fichier(path);
     const int taille = 20; //Taille de lecture défini à 20 car on récupère un Terrain, A CHANGER POUR LES AUTRES OBJETS / à faire dynamiquement
     float vertices[taille];
@@ -14,13 +17,13 @@ Terrain::Terrain(std::string path, glm::vec3 topLeft, glm::vec3 _size, bool _Tex
     if (fichier) {
         //std::cout << "Ouverture du fichier tile01.txt reussie !" << std::endl; //Debug purpose
 
-        for (int i = 0; i < taille; i++) {  
+        for (int i = 0; i < taille; i++) {
             float valeur;
             fichier >> valeur; // On lit un chiffre dans le fichier (déplace le curseur et s'arrête à l'espace)
 
             vertices[i] = valeur;
 
-            //std::cout << valeur << std::endl; //Debug purpose
+            //std::cout << valeur << std::endl; //Debug purpose to see the values of each txt loaded
         }
         fichier.close();
     }
@@ -50,11 +53,11 @@ Terrain::~Terrain() {
 
 void Terrain::Draw(Shader *shaderProgram, float dt) {
     rb.update(dt);
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), rb.position);
+    glm::vec3 center = rb.position - size / 2.0f;
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), center);
     model = glm::scale(model, size);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram->ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
     VAOModel.Bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     VAOModel.Unbind();
 }
-

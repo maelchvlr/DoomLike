@@ -27,8 +27,6 @@ public:
 	void dampen();
 	void stopSimulate();
 	void startSimulate();
-	
-	
 
 	//determine if the object is static or not
 	bool isMovable() { return movable; }
