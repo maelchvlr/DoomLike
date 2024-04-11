@@ -27,9 +27,9 @@ void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, const char* u
 }
 
 void Camera::Inputs(GLFWwindow* window) {
+	std::cout << Orientation.x << " " << Orientation.y << " " << Orientation.z << std::endl;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		rb->velocity += speed * Orientation;
-		std::cout << Orientation.x << " " << Orientation.y << " " << Orientation.z << std::endl;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		rb->velocity += speed * -Orientation;
@@ -39,7 +39,7 @@ void Camera::Inputs(GLFWwindow* window) {
 		rb->velocity += speed * glm::normalize(glm::cross(Orientation, Up));
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 		rb->velocity += speed * Up;
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)	//Debuging
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 		rb->velocity += speed * -Up;
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		speed = 0.4f;
