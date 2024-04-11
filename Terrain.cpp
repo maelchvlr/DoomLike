@@ -7,9 +7,6 @@
 Terrain::Terrain(std::string path, glm::vec3 topLeft, glm::vec3 _size, bool _Textured, Texture* _Texture, float mass, float restitution, bool movable)
     : Models(mass, restitution, movable, _Textured, _Texture, topLeft, _size), size(_size)
 {
-    std::cout << "Terrain size : " << size.x << " " << size.y << " " << size.z << std::endl;
-    std::cout << "Terrain rigid body size : " << rb.size.x << " " << rb.size.y << " " << rb.size.z << std::endl;
-
     std::ifstream fichier(path);
     const int taille = 20; //Taille de lecture défini à 20 car on récupère un Terrain, A CHANGER POUR LES AUTRES OBJETS / à faire dynamiquement
     float vertices[taille];

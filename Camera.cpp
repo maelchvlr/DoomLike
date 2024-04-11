@@ -2,15 +2,19 @@
 
 Camera::Camera(int width, int height, glm::vec3 position, GLuint *shaderProgram) 
 {
-	Camera::rb = new RigidBody(0.0f, 0.0f, false, glm::vec3(0.5, 1, 0.5), position, glm::vec3(0.0f));
+	Camera::rb = new RigidBody(10.0f, 0.0f, true, glm::vec3(0.5, 1, 0.5), position, glm::vec3(0.0f));
 	shader = *shaderProgram;
 	Camera::width = width;
 	Camera::height = height;
 }
 
-void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, const char* uniform)
+void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, const char* uniform, Shader* shaderProgram, float dt)
 {
-	//Initialize the spawn position and orientation of the camera
+	rb->startSimulate();
+	rb->update(dt);
+
+	//std::cout << "Camera position: " << rb->position.x << " " << rb->position.y << " " << rb->position.z << std::endl;
+
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
 
@@ -23,24 +27,20 @@ void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, const char* u
 }
 
 void Camera::Inputs(GLFWwindow* window) {
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		rb->position += speed * Orientation;
-
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		rb->velocity += speed * Orientation;
+		std::cout << Orientation.x << " " << Orientation.y << " " << Orientation.z << std::endl;
+	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		rb->position += speed * -Orientation;
-
+		rb->velocity += speed * -Orientation;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		rb->position += speed * -glm::normalize(glm::cross(Orientation, Up));
-
+		rb->velocity += speed * -glm::normalize(glm::cross(Orientation, Up));
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		rb->position += speed * glm::normalize(glm::cross(Orientation, Up));
-
+		rb->velocity += speed * glm::normalize(glm::cross(Orientation, Up));
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		rb->position += speed * Up;
-
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-		rb->position += speed * -Up;
-
+		rb->velocity += speed * Up;
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)	//Debuging
+		rb->velocity += speed * -Up;
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		speed = 0.4f;
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)

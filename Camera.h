@@ -6,6 +6,7 @@
 #include <glfw3.h>
 #include <glm.hpp>
 #include "RigidBody.h"
+#include "Shader.h"
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 #include <gtx/rotate_vector.hpp>
@@ -29,7 +30,7 @@ public:
 
 	Camera(int width, int height, glm::vec3 position,GLuint *shaderProgram);
 
-	void Matrix(float FOVdeg, float nearPlane, float farPlane, const char* uniform);
+	void Matrix(float FOVdeg, float nearPlane, float farPlane, const char* uniform, Shader* shaderProgram, float dt);
 	void Inputs(GLFWwindow* window);
 
 private:

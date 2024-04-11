@@ -131,18 +131,18 @@ int main() {
             handlePredictiveCollision(camera->rb, terrain->getRigidBody(), deltaTime, "camera terrain");
 
             // Cubes x terrains
-            handlePredictiveCollision(cube2.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube2 terrain");
-            handlePredictiveCollision(cube1.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube1 terrain");
-            handlePredictiveCollision(cube3.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube3 terrain1");
-            handlePredictiveCollision(cube4.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube4 terrain1");
+            //handlePredictiveCollision(cube2.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube2 terrain");
+            //handlePredictiveCollision(cube1.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube1 terrain");
+            //handlePredictiveCollision(cube3.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube3 terrain1");
+            //handlePredictiveCollision(cube4.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube4 terrain1");
         }
 
         // Cubes x Cubes collisions
-        handlePredictiveCollision(cube1.getRigidBody(), cube2.getRigidBody(), deltaTime, "cube1 cube2");
+        //handlePredictiveCollision(cube1.getRigidBody(), cube2.getRigidBody(), deltaTime, "cube1 cube2");
 
         // Camera
         camera->Inputs(window);
-        camera->Matrix(45.0f, 0.1f, 100.0f, "camMatrix");
+        camera->Matrix(45.0f, 0.1f, 100.0f, "camMatrix", &shaderProgram, deltaTime);
 
         glfwSwapBuffers(window);    // Swap front and back buffers
         glfwPollEvents();	        // Poll for and process events
