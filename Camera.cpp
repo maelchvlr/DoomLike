@@ -28,6 +28,7 @@ void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, const char* u
 
 void Camera::Inputs(GLFWwindow* window) {
 	bool anyKeyPressed = false;
+	bool isSpacePressed = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		rb->velocity.x += speed * Orientation.x;
@@ -50,14 +51,12 @@ void Camera::Inputs(GLFWwindow* window) {
 		anyKeyPressed = true;
 	}
 		
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-		rb->velocity += speed * Up;
+	// Jump only on the frame the spacebar is pressed
+	if (isSpacePressed && rb->velocity.y == 0) {
+		rb->velocity += glm::vec3(0, speed * 25.0f, 0); // Modify the y component for the jump
 		anyKeyPressed = true;
 	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-		rb->velocity += speed * -Up;
-		anyKeyPressed = true;
-	}
+
 
 
 	if (!anyKeyPressed) {
