@@ -30,12 +30,15 @@ void Camera::Inputs(GLFWwindow* window) {
 	bool anyKeyPressed = false;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		rb->velocity += speed * Orientation;
+		rb->velocity.x += speed * Orientation.x;
+		rb->velocity.z += speed * Orientation.z;
 		std::cout << Orientation.x << " " << Orientation.y << " " << Orientation.z << std::endl;
 		anyKeyPressed = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		rb->velocity += speed * -Orientation;
+
+		rb->velocity.x += speed * -Orientation.x;
+		rb->velocity.z += speed * -Orientation.z;
 		anyKeyPressed = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
