@@ -37,10 +37,6 @@ void applyImpulse(RigidBody& rb1, RigidBody& rb2, const glm::vec3& collisionNorm
     //dot product : x1*x2 + y1*y2 + z1*z2
     float velocityAlongNormal = glm::dot(relativeVelocity, collisionNormal);
 
-    //Debug purpose
-    //std::cout << "relative velocity: " << relativeVelocity.x << " | " << relativeVelocity.y << " | " << relativeVelocity.z << std::endl;
-    //std::cout << "velocity along normal: " << velocityAlongNormal << std::endl;
-
     // They are moving apart, so no impulse is necessary
     if (velocityAlongNormal > 0) return;
 
@@ -50,9 +46,7 @@ void applyImpulse(RigidBody& rb1, RigidBody& rb2, const glm::vec3& collisionNorm
     // apply the mass on the object to prevent it to just bounce to the infinity
     j /= rb1.getInverseMass() + rb2.getInverseMass();
 
-    //std::cout << "J : " << j << std::endl;
     glm::vec3 impulse = j * collisionNormal;
-    //std::cout << "Impulse : " << impulse.x << " | " << impulse.y << " | " << impulse.z << std::endl;
 
     // Apply the impulse to the two models to make them bounce
     rb1.velocity -= rb1.getInverseMass() * impulse;

@@ -68,9 +68,35 @@ int main() {
     //Défini le path vers le dossier des terrains et itère dedans
     std::filesystem::path terrainPath = "./ressources/map/";
     for (const auto& terrain : std::filesystem::directory_iterator(terrainPath)) {
-        //std::cout << terrain.path() << std::endl;
-        //std::cout << terrain.path().string() << std::endl;    //Debug purpose to see the difference between path and string -> string = path without quotes ("")
-        Terrain* newTerrain = new Terrain(terrain.path().string(), glm::vec3(0, -4, 0), glm::vec3(6, 0, 6), false, nullptr, 50.0f, 0.5);
+        //Ouverture du fichier cible dans le dossier map
+        std::ifstream fichier(terrain.path().string());
+
+        //On récupère les coordonnées du coin supérieur gauche du terrain (Les 3 premières valeurs du fichier cible)
+        const int taille = 3;
+        //On définit une taille fixe pour scale les morceau de terrain (arbitraire)
+        glm::vec3 scale = glm::vec3(6, 0, 6);
+        //On initialise un tableau de float pour stocker les valeurs du topLeftCorner initial
+        float topLeftCoord[taille];
+
+        if (fichier) {
+            for (int i = 0; i < taille; i++) {
+                float valeur;
+                fichier >> valeur;  // On lit un chiffre dans le fichier et on déplace le curseur sur le prochain float (type de la variable valeur)
+                topLeftCoord[i] = valeur;   //On stock les valeurs pour le topLeftCorner
+            }
+            fichier.close();
+        }
+        else {
+            std::cout << "Erreur lors de l'acquisition du TopLeftCorner ! " << terrain.path().string() << " " << std::endl;
+        }
+
+        //On scale le topLeftCorner en fonction de la taille du terrain (scale)
+        glm::vec3 topLeftCorner = glm::vec3(topLeftCoord[0] * scale.x, topLeftCoord[1] * scale.y, topLeftCoord[2] * scale.z);
+        //On définit le centre du terrain en fonction du topLeftCorner et du scale pour éviter les décalages avec le rigidBody
+        glm::vec3 center = topLeftCorner + scale / 2.0f;
+        
+        //On initialise le terrain et on le stocke dans le vecteur des terrains
+        Terrain* newTerrain = new Terrain(terrain.path().string(), center, scale, false, nullptr, 50.0f, 0.5);
         terrains.push_back(newTerrain);
     }
     std::cout << "Terrains loaded" << std::endl;
@@ -79,7 +105,7 @@ int main() {
     Shader shaderProgram = Shader("VertexShader.glsl", "FragmentShader.glsl");
 
     // Create the camera
-    Camera* camera = new Camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f), &shaderProgram.ID);
+    Camera* camera = new Camera(width, height, glm::vec3(0.0f, 4.0f, 2.0f), &shaderProgram.ID);
 
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
@@ -131,14 +157,14 @@ int main() {
             handlePredictiveCollision(camera->rb, terrain->getRigidBody(), deltaTime, "camera terrain");
 
             // Cubes x terrains
-            //handlePredictiveCollision(cube2.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube2 terrain");
-            //handlePredictiveCollision(cube1.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube1 terrain");
-            //handlePredictiveCollision(cube3.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube3 terrain1");
-            //handlePredictiveCollision(cube4.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube4 terrain1");
+            handlePredictiveCollision(cube2.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube2 terrain");
+            handlePredictiveCollision(cube1.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube1 terrain");
+            handlePredictiveCollision(cube3.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube3 terrain1");
+            handlePredictiveCollision(cube4.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube4 terrain1");
         }
 
         // Cubes x Cubes collisions
-        //handlePredictiveCollision(cube1.getRigidBody(), cube2.getRigidBody(), deltaTime, "cube1 cube2");
+        handlePredictiveCollision(cube1.getRigidBody(), cube2.getRigidBody(), deltaTime, "cube1 cube2");
 
         // Camera
         camera->Inputs(window);
