@@ -5,7 +5,13 @@
 
 // Utility to calculate collision normal based on predictive positions
 glm::vec3 calculateCollisionNormal(RigidBody& rb1, RigidBody& rb2) {
-	return glm::vec3(0, -1, 0);
+    //glm::vec3 normalProcessing = glm::vec3(0.0f);
+
+    glm::vec3 direction = rb1.position - rb2.position;
+    glm::vec3 normal = glm::normalize(direction);
+    
+    //return normal;
+    return glm::vec3(0, -1, 0);
 }
 
 // Checks if two models will collide based on their current velocities and positions
@@ -21,7 +27,8 @@ bool willCollide(RigidBody& rb1, RigidBody& rb2, float deltaTime) {
     glm::vec3 rb2_max = futurePos2 + rb2.size / 2.0f;
 
     // Check for overlap in all axes
-    bool collide = (rb1_min.x <= rb2_max.x && rb1_max.x >= rb2_min.x) &&
+    bool collide = 
+        (rb1_min.x <= rb2_max.x && rb1_max.x >= rb2_min.x) &&
         (rb1_min.y <= rb2_max.y && rb1_max.y >= rb2_min.y) &&
         (rb1_min.z <= rb2_max.z && rb1_max.z >= rb2_min.z);
 
@@ -61,16 +68,13 @@ void applyImpulse(RigidBody& rb1, RigidBody& rb2, const glm::vec3& collisionNorm
 void handlePredictiveCollision(RigidBody* rb1, RigidBody* rb2, float deltaTime, std::string tag) {
 
     if (willCollide(*rb1, *rb2, deltaTime)) {
-        //std::cout << "collision detected between " << tag << std::endl;
+        std::cout << "collision detected between " << tag << std::endl;
 
         //If the two models will collide
         rb1->startSimulate();
         rb2->startSimulate();
         glm::vec3 collisionNormal = calculateCollisionNormal(*rb1, *rb2);
+        std::cout << tag << "collision normal: " << collisionNormal.x << " " << collisionNormal.y << " " << collisionNormal.z << std::endl;
         applyImpulse(*rb1, *rb2, collisionNormal);
     }
-}
-
-void handleHorizontalCollision(RigidBody* rb1, RigidBody* rb2, float deltaTime, std::string tag) {
-
 }
