@@ -70,3 +70,7 @@ void handlePredictiveCollision(RigidBody* rb1, RigidBody* rb2, float deltaTime, 
         applyImpulse(*rb1, *rb2, collisionNormal);
     }
 }
+
+void handleHorizontalCollision(RigidBody* rb1, RigidBody* rb2, float deltaTime, std::string tag) {
+
+}

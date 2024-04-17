@@ -56,14 +56,23 @@ int main() {
     Texture dirtTex = Texture("ressources/textures/dirt.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
     Texture crateTex = Texture("ressources/textures/crate.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 
-    // Create the models
-    Cube cube1 = Cube(glm::vec3(1.4, 4, 1), glm::vec3(1), true, &crateTex, 0.1f, 1);
-    Cube cube2 = Cube(glm::vec3(1, 3, 1), glm::vec3(1), true, &crateTex, 0.5f);
-    Cube cube3 = Cube(glm::vec3(3, 4, 3), glm::vec3(1), true, &crateTex, 2.f, 0);
-    Cube cube4 = Cube(glm::vec3(3, 4, 1), glm::vec3(1), true, &crateTex, 0.05f);
-
     //Terrain initializer
     std::vector<Terrain*> terrains;
+
+    //Cube initializer
+    std::vector<Cube*> cubes;
+
+    // Cubes
+    Cube* newCube1 = new Cube(glm::vec3(1.4, 4, 1), glm::vec3(1), true, &crateTex, 0.1f, 1);
+    cubes.push_back(newCube1);
+    Cube* newCube2 = new Cube(glm::vec3(1, 3, 1), glm::vec3(1), true, &crateTex, 0.5f);
+    cubes.push_back(newCube2);
+    Cube* newCube3 = new Cube(glm::vec3(3, 4, 3), glm::vec3(1), true, &crateTex, 2.f, 0);
+    cubes.push_back(newCube3);
+    Cube* newCube4 = new Cube(glm::vec3(3, 4, 1), glm::vec3(1), true, &crateTex, 0.05f);
+    cubes.push_back(newCube4);
+
+    // Terrains
 
     //Défini le path vers le dossier des terrains et itère dedans
     std::filesystem::path terrainPath = "./ressources/map/";
@@ -129,14 +138,10 @@ int main() {
         shaderProgram.Activate();
 
         // Draw the cube(s)
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 1.0f, 0.0f);
-        cube1.Draw(&shaderProgram, deltaTime);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 0.0f);
-        cube2.Draw(&shaderProgram, deltaTime);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 0.0f, 1.0f);
-        cube3.Draw(&shaderProgram, deltaTime);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 1.0f, 1.0f);
-        cube4.Draw(&shaderProgram, deltaTime);
+        for (Cube* cube : cubes) {
+            glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 1.0f, 0.0f);
+			cube->Draw(&shaderProgram, deltaTime);
+		}
 
         // Draw the terrain(s)
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 0.0f, 1.0f);
@@ -153,19 +158,23 @@ int main() {
 
         // Handle collisions
         for (Terrain* terrain : terrains) {
+            for (Cube* cube : cubes) {
+                // Cubes x terrains
+                handlePredictiveCollision(cube->getRigidBody(), terrain->getRigidBody(), deltaTime, "cube terrain");
+            }
             // Camera x terrains
             handlePredictiveCollision(camera->rb, terrain->getRigidBody(), deltaTime, "camera terrain");
-
-            // Cubes x terrains
-            handlePredictiveCollision(cube2.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube2 terrain");
-            handlePredictiveCollision(cube1.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube1 terrain");
-            handlePredictiveCollision(cube3.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube3 terrain1");
-            handlePredictiveCollision(cube4.getRigidBody(), terrain->getRigidBody(), deltaTime, "cube4 terrain1");
         }
 
-        // Cubes x Cubes collisions
-        handlePredictiveCollision(cube1.getRigidBody(), cube2.getRigidBody(), deltaTime, "cube1 cube2");
-
+        for (Cube* cube1 : cubes) {
+            for (Cube* cube2 : cubes) {
+				if (cube1 == cube2) continue;
+				// Cube x Cube collisions
+                handlePredictiveCollision(cube1->getRigidBody(), cube2->getRigidBody(), deltaTime, "cube x cube");
+			}
+            handlePredictiveCollision(camera->rb, cube1->getRigidBody(), deltaTime, "camera x cube");
+        }
+        
         // Camera
         camera->Inputs(window);
         camera->Matrix(45.0f, 0.1f, 100.0f, "camMatrix", &shaderProgram, deltaTime);
@@ -181,10 +190,9 @@ int main() {
 
     // De-allocate resources
     shaderProgram.Delete();
-    cube1.~Cube();
-    cube2.~Cube();
-    cube3.~Cube();
-    cube4.~Cube();
+
+    for (auto cube : cubes)
+		cube->~Cube();
 
     for (auto terrain : terrains)
         terrain->~Terrain();

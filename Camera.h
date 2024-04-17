@@ -25,6 +25,7 @@ public:
 	int width;
 	int height;
 
+	bool flymode = false;
 	float speed = 0.1f;
 	float sensitivity = 100.0f;
 

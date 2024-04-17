@@ -11,7 +11,9 @@ Camera::Camera(int width, int height, glm::vec3 position, GLuint *shaderProgram)
 void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, const char* uniform, Shader* shaderProgram, float dt)
 {
 	rb->startSimulate();
-	rb->update(dt);
+	if (!flymode) {
+		rb->update(dt);
+	}
 
 	//std::cout << "Camera position: " << rb->position.x << " " << rb->position.y << " " << rb->position.z << std::endl;
 
@@ -31,33 +33,64 @@ void Camera::Inputs(GLFWwindow* window) {
 	bool isSpacePressed = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		rb->velocity.x += speed * Orientation.x;
-		rb->velocity.z += speed * Orientation.z;
+		if (!flymode) {
+			rb->velocity.x += speed * Orientation.x;
+			rb->velocity.z += speed * Orientation.z;
+		}
+		else {
+			rb->position += speed * Orientation;
+		}
 		anyKeyPressed = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		rb->velocity.x += speed * -Orientation.x;
-		rb->velocity.z += speed * -Orientation.z;
+		if (!flymode) {
+			rb->velocity.x += speed * -Orientation.x;
+			rb->velocity.z += speed * -Orientation.z;
+		}
+		else {
+			rb->position += speed * -Orientation;
+		}
 		anyKeyPressed = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		rb->velocity += speed * -glm::normalize(glm::cross(Orientation, Up));
+		if (!flymode) {
+			rb->velocity += speed * -glm::normalize(glm::cross(Orientation, Up));
+		}
+		else {
+			rb->position += speed * -glm::normalize(glm::cross(Orientation, Up));
+		}
 		anyKeyPressed = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		rb->velocity += speed * glm::normalize(glm::cross(Orientation, Up));
+		if (!flymode) {
+			rb->velocity += speed * glm::normalize(glm::cross(Orientation, Up));
+		}
+		else {
+			rb->position += speed * glm::normalize(glm::cross(Orientation, Up));
+		}
 		anyKeyPressed = true;
 	}
-		
+	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
+		flymode = !flymode;
+		rb->stopSimulate();
+	}
+
 	// Jump only on the frame the spacebar is pressed
 	if (isSpacePressed && rb->velocity.y == 0) {
-		rb->velocity += glm::vec3(0, speed * 25.0f, 0); // Modify the y component for the jump
+		if (!flymode) {
+			rb->velocity += glm::vec3(0, speed * 25.0f, 0); // Modify the y component for the jump
+		}
+		else {
+			rb->position += speed * Up;
+		}
 		anyKeyPressed = true;
 	}
 
-	if (!anyKeyPressed) {
-		rb->velocity.x *= 0.95f;
-		rb->velocity.z *= 0.95f;
+	if (!flymode) {
+		if (!anyKeyPressed) {
+			rb->velocity.x *= 0.95f;
+			rb->velocity.z *= 0.95f;
+		}
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)

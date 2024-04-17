@@ -32,6 +32,7 @@ Terrain::Terrain(std::string path, glm::vec3 topLeft, glm::vec3 _size, bool _Tex
     };
 
     Models::init(vertices, sizeof(vertices), indices, sizeof(indices));
+    //std::cout << "Terrain rb positon : " << rb.position.x << " " << rb.position.y << " " << rb.position.z << std::endl;
 }
 
 Terrain::~Terrain() {
