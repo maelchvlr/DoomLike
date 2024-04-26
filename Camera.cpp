@@ -15,7 +15,7 @@ void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, const char* u
 		rb->update(dt);
 	}
 
-	//std::cout << "Camera position: " << rb->position.x << " " << rb->position.y << " " << rb->position.z << std::endl;
+	std::cout << "Camera position: " << rb->position.x << " " << rb->position.y << " " << rb->position.z << std::endl;
 
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
@@ -76,7 +76,9 @@ void Camera::Inputs(GLFWwindow* window) {
 	}
 
 	// Jump only on the frame the spacebar is pressed
-	if (isSpacePressed && rb->velocity.y == 0) {
+	//std::cout << "Velocity for jump : " << rb->velocity.y << std::endl;
+	//0.0001f work fine for now but is may be due to another problem
+	if (isSpacePressed && abs(rb->velocity.y) < 0.0001f) {
 		if (!flymode) {
 			rb->velocity += glm::vec3(0, speed * 25.0f, 0); // Modify the y component for the jump
 		}

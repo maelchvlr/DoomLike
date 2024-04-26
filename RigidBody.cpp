@@ -16,9 +16,8 @@ void RigidBody::update(float dt) {
 	velocity += acceleration * dt;
 }
 
-void RigidBody::dampen()
-{
-	const float stopThreshold = 0.08f; // Threshold for when to completely stop the object
+void RigidBody::dampen() {
+	const float stopThreshold = 0.1f; // Threshold for when to completely stop the object
 
 	if (abs(glm::length(velocity)) < stopThreshold) {
 		velocity = glm::vec3(0.0f);
