@@ -27,7 +27,7 @@ public:
 
 	bool flymode = false;
 	float speed = 0.1f;
-	float sensitivity = 100.0f;
+	float sensitivity = 60.0f;
 
 	Camera(int width, int height, glm::vec3 position,GLuint *shaderProgram);
 

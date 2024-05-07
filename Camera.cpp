@@ -16,6 +16,7 @@ void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, const char* u
 	}
 
 	std::cout << "Camera position: " << rb->position.x << " " << rb->position.y << " " << rb->position.z << std::endl;
+	std::cout << "Camera velocity: " << rb->velocity.x << " " << rb->velocity.y << " " << rb->velocity.z << std::endl;
 
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
@@ -54,7 +55,8 @@ void Camera::Inputs(GLFWwindow* window) {
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 		if (!flymode) {
-			rb->velocity += speed * -glm::normalize(glm::cross(Orientation, Up));
+			rb->velocity.x += speed * -glm::normalize(glm::cross(Orientation, Up)).x;
+			rb->velocity.z += speed * -glm::normalize(glm::cross(Orientation, Up)).z;
 		}
 		else {
 			rb->position += speed * -glm::normalize(glm::cross(Orientation, Up));
@@ -63,7 +65,8 @@ void Camera::Inputs(GLFWwindow* window) {
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		if (!flymode) {
-			rb->velocity += speed * glm::normalize(glm::cross(Orientation, Up));
+			rb->velocity.x += speed * glm::normalize(glm::cross(Orientation, Up)).x;
+			rb->velocity.z += speed * glm::normalize(glm::cross(Orientation, Up)).z;
 		}
 		else {
 			rb->position += speed * glm::normalize(glm::cross(Orientation, Up));

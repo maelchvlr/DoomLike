@@ -68,11 +68,16 @@ CollisionData& willCollide(RigidBody& rb1, RigidBody& rb2, float deltaTime) {
             std::cout << "Terrain position : " << rb2.position.x << " | " << rb2.position.y << " | " << rb2.position.z << std::endl;
 
             std::cout << "                        " << std::endl;
+
+            // print velocity of the two models
+            std::cout << "Velocity of the camera : " << rb1.velocity.x << " | " << rb1.velocity.y << " | " << rb1.velocity.z << std::endl;
+            std::cout << "Velocity of the terrain : " << rb2.velocity.x << " | " << rb2.velocity.y << " | " << rb2.velocity.z << std::endl;
+    
+            std::cout << "                        " << std::endl;
         }
         else if (!y) {
             collide.collisionNormal.y = glm::normalize(rb1.position - rb2.position).y;
             collide.CollisionDetected = true;
-            std::cout << "Collision normal in Y axis : " << collide.collisionNormal.y << std::endl;
         }
         else if (!z) {
             collide.collisionNormal.z = glm::normalize(rb1.position - rb2.position).z;
