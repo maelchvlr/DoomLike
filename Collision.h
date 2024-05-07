@@ -49,8 +49,56 @@ CollisionData& willCollide(RigidBody& rb1, RigidBody& rb2, float deltaTime) {
         //std::cout << "Collide : " << x << " | " << y << " | " << z << std::endl;
 
         if (!x) {
-			collide.collisionNormal.x = glm::normalize(rb1.position - rb2.position).x;
-            collide.CollisionDetected = true;
+
+            //Variables pour la surface de collision
+            int surface_collider_z_min = 0;
+            int surface_collider_z_max = 0;
+            int surface_collider_y_collision = 0;
+            int surface_collider_y_min = 0;
+
+            //Formatage des valeurs pour éviter les valeurs négatives
+            rb2_max.z = abs(rb2_max.z);
+            rb2_min.z = abs(rb2_min.z);
+            rb1_max.z = abs(rb1_max.z);
+            rb1_min.z = abs(rb1_min.z);
+
+            //On récupère notre largeur de surface de collision
+            if (rb2_min.z > rb1_min.z && rb2_max.z < rb1_max.z) {
+                surface_collider_z_min = rb2_min.z;
+                surface_collider_z_max = rb2_max.z;
+            }
+            else if (rb2_min.z < rb1_min.z && rb2_max.z < rb1_max.z) {
+                surface_collider_z_min = rb1_min.z;
+                surface_collider_z_max = rb2_max.z;
+            }
+            else if (rb2_min.z > rb1_min.z && rb2_max.z > rb1_max.z) {
+                surface_collider_z_min = rb2_min.z;
+                surface_collider_z_max = rb1_max.z;
+            }
+            else if (rb2_min.z < rb1_min.z && rb2_max.z > rb1_max.z) {
+				surface_collider_z_min = rb1_min.z;
+				surface_collider_z_max = rb1_max.z;
+			}
+
+            //On récupère la hauteur de cette surface
+            if (rb1_min.y < rb2_min.y) {
+                surface_collider_y_min = rb1_min.y;
+                surface_collider_y_collision = rb2_min.y;
+            }
+            else {
+                surface_collider_y_min = rb2_min.y;
+                surface_collider_y_collision = rb1_min.y;
+            }
+
+            //Vérification de la Surface de collision
+            int CollisionSurface = surface_collider_z_max - surface_collider_z_min * (surface_collider_y_min - surface_collider_y_collision);
+
+            std::cout << "Surface de collision : " << CollisionSurface << std::endl;
+
+            if (CollisionSurface > 5.0f) {
+                collide.collisionNormal.x = glm::normalize(rb1.position - rb2.position).x;
+                collide.CollisionDetected = true;
+            }			
             std::cout << "Collision normal in X axis : " << collide.collisionNormal.x << std::endl;
 
             std::cout << "Future rigidbody 1 min : " << frb1_min.x << " | " << frb1_min.y << " | " << frb1_min.z << std::endl;
