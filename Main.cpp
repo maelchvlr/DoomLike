@@ -17,6 +17,9 @@
 #include "Cube.h"
 #include "Camera.h"
 
+#include "Actor.h"
+#include "Player.h"
+
 #include "Shader.h"
 #include "VAO.h"
 #include "VBO.h"
@@ -63,14 +66,14 @@ int main() {
     std::vector<Cube*> cubes;
 
     // Cubes
-    Cube* newCube1 = new Cube(glm::vec3(1.4, 4, 1), glm::vec3(1), true, &crateTex, 0.1f, 1);
-    //cubes.push_back(newCube1);
+    /*Cube* newCube1 = new Cube(glm::vec3(1.4, 4, 1), glm::vec3(1), true, &crateTex, 0.1f, 1);
+    cubes.push_back(newCube1);
     Cube* newCube2 = new Cube(glm::vec3(1, 3, 1), glm::vec3(1), true, &crateTex, 0.5f);
-    //cubes.push_back(newCube2);
+    cubes.push_back(newCube2);
     Cube* newCube3 = new Cube(glm::vec3(3, 4, 3), glm::vec3(1), true, &crateTex, 2.f, 0);
-    //cubes.push_back(newCube3);
-    Cube* newCube4 = new Cube(glm::vec3(3, 4, 1), glm::vec3(1), true, &crateTex, 0.05f);
-    //cubes.push_back(newCube4);
+    cubes.push_back(newCube3);*/
+    Cube* newCube4 = new Cube(glm::vec3(3, 4, 1), glm::vec3(1), true, &crateTex, 5.f);
+    cubes.push_back(newCube4);
 
     // Terrains
 
@@ -115,6 +118,8 @@ int main() {
 
     // Create the camera
     Camera* camera = new Camera(width, height, glm::vec3(0.0f, 4.0f, 2.0f), &shaderProgram.ID);
+
+    Player player = Player(camera->rb->getPosition(), *camera);
 
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
@@ -175,9 +180,9 @@ int main() {
             handlePredictiveCollision(camera->rb, cube1->getRigidBody(), deltaTime, "camera x cube");
         }
         
-        // Camera
-        camera->Inputs(window);
-        camera->Matrix(45.0f, 0.1f, 100.0f, "camMatrix", &shaderProgram, deltaTime);
+        // Player
+        player.Update(deltaTime);
+        player.UpdateCamera(deltaTime, window, shaderProgram);
 
         glfwSwapBuffers(window);    // Swap front and back buffers
         glfwPollEvents();	        // Poll for and process events

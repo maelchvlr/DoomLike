@@ -150,7 +150,7 @@ void applyImpulse(RigidBody& rb1, RigidBody& rb2, const glm::vec3& collisionNorm
     if (velocityAlongNormal < 0) return;
 
     // Restitution depends of the bounciness of the object
-    float restitution = std::max(rb1.restitution, rb2.restitution);
+    float restitution = std::min(rb1.restitution, rb2.restitution);
 
     float j = restitution * velocityAlongNormal;
 
