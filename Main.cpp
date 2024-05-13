@@ -66,12 +66,12 @@ int main() {
     std::vector<Cube*> cubes;
 
     // Cubes
-    /*Cube* newCube1 = new Cube(glm::vec3(1.4, 4, 1), glm::vec3(1), true, &crateTex, 0.1f, 1);
+    Cube* newCube1 = new Cube(glm::vec3(1.4, 4, 1), glm::vec3(1), true, &crateTex, 0.1f, 1);
     cubes.push_back(newCube1);
     Cube* newCube2 = new Cube(glm::vec3(1, 3, 1), glm::vec3(1), true, &crateTex, 0.5f);
     cubes.push_back(newCube2);
     Cube* newCube3 = new Cube(glm::vec3(3, 4, 3), glm::vec3(1), true, &crateTex, 2.f, 0);
-    cubes.push_back(newCube3);*/
+    cubes.push_back(newCube3);
     Cube* newCube4 = new Cube(glm::vec3(3, 4, 1), glm::vec3(1), true, &crateTex, 5.f);
     cubes.push_back(newCube4);
 

@@ -62,72 +62,56 @@ CollisionData& willCollide(RigidBody& rb1, RigidBody& rb2, float deltaTime) {
             int surface_collider_y_collision = 0;
             int surface_collider_y_min = 0;
 
-            //Formatage des valeurs pour �viter les valeurs n�gatives
-            rb2_max.z = abs(rb2_max.z);
-            rb2_min.z = abs(rb2_min.z);
-            rb1_max.z = abs(rb1_max.z);
-            rb1_min.z = abs(rb1_min.z);
+            //Tout un truc dont j'etais tres fier mais qui ne sert au final a rien ?
+            // A garder par respect pour le temps perdu / sera ptet utile car collision pas parfaites
+            //Formatage des valeurs pour eviter les valeurs negatives
+   //         rb2_max.z = abs(rb2_max.z);
+   //         rb2_min.z = abs(rb2_min.z);
+   //         rb1_max.z = abs(rb1_max.z);
+   //         rb1_min.z = abs(rb1_min.z);
 
-            //On r�cup�re notre largeur de surface de collision
-            if (rb2_min.z > rb1_min.z && rb2_max.z < rb1_max.z) {
-                surface_collider_z_min = rb2_min.z;
-                surface_collider_z_max = rb2_max.z;
-            }
-            else if (rb2_min.z < rb1_min.z && rb2_max.z < rb1_max.z) {
-                surface_collider_z_min = rb1_min.z;
-                surface_collider_z_max = rb2_max.z;
-            }
-            else if (rb2_min.z > rb1_min.z && rb2_max.z > rb1_max.z) {
-                surface_collider_z_min = rb2_min.z;
-                surface_collider_z_max = rb1_max.z;
-            }
-            else if (rb2_min.z < rb1_min.z && rb2_max.z > rb1_max.z) {
-				surface_collider_z_min = rb1_min.z;
-				surface_collider_z_max = rb1_max.z;
-			}
+   //         //On r�cup�re notre largeur de surface de collision
+   //         if (rb2_min.z > rb1_min.z && rb2_max.z < rb1_max.z) {
+   //             surface_collider_z_min = rb2_min.z;
+   //             surface_collider_z_max = rb2_max.z;
+   //         }
+   //         else if (rb2_min.z < rb1_min.z && rb2_max.z < rb1_max.z) {
+   //             surface_collider_z_min = rb1_min.z;
+   //             surface_collider_z_max = rb2_max.z;
+   //         }
+   //         else if (rb2_min.z > rb1_min.z && rb2_max.z > rb1_max.z) {
+   //             surface_collider_z_min = rb2_min.z;
+   //             surface_collider_z_max = rb1_max.z;
+   //         }
+   //         else if (rb2_min.z < rb1_min.z && rb2_max.z > rb1_max.z) {
+			//	surface_collider_z_min = rb1_min.z;
+			//	surface_collider_z_max = rb1_max.z;
+			//}
 
-            //On r�cup�re la hauteur de cette surface
-            if (rb1_min.y < rb2_min.y) {
-                surface_collider_y_min = rb1_min.y;
-                surface_collider_y_collision = rb2_min.y;
-            }
-            else {
-                surface_collider_y_min = rb2_min.y;
-                surface_collider_y_collision = rb1_min.y;
-            }
+   //         //On recupere la hauteur de cette surface
+   //         if (rb1_min.y < rb2_min.y) {
+   //             surface_collider_y_min = rb2_min.y;
+   //         }
+   //         else {
+   //             surface_collider_y_min = rb1_min.y;
+   //         }
 
-            //V�rification de la Surface de collision
-            int CollisionSurface = surface_collider_z_max - surface_collider_z_min * (surface_collider_y_min - surface_collider_y_collision);
+   //         if (rb1.size.y < rb2.size.y) {
+   //             surface_collider_y_collision = rb2.size.y;
+   //         }
+			//else {
+			//	surface_collider_y_collision = rb1.size.y;
+			//}
 
-            std::cout << "Surface de collision : " << CollisionSurface << std::endl;
+   //         //Verification de la Surface de collision
+   //         int CollisionSurface = (surface_collider_z_max - surface_collider_z_min) * (surface_collider_y_min - surface_collider_y_collision);
 
-            if (CollisionSurface > 5.0f) {
+            //if (CollisionSurface > 4.5f) {
+            if (rb1.size.y != 0 && rb2.size.y != 0) 
+            {
                 collide.collisionNormal.x = glm::normalize(rb1.position - rb2.position).x;
                 collide.CollisionDetected = true;
-            }			
-            std::cout << "Collision normal in X axis : " << collide.collisionNormal.x << std::endl;
-
-            std::cout << "Future rigidbody 1 min : " << frb1_min.x << " | " << frb1_min.y << " | " << frb1_min.z << std::endl;
-            std::cout << "Future rigidbody 1 max : " << frb1_max.x << " | " << frb1_max.y << " | " << frb1_max.z << std::endl;
-
-            std::cout << "Future rigidbody 2 min : " << frb2_min.x << " | " << frb2_min.y << " | " << frb2_min.z << std::endl;
-            std::cout << "Future rigidbody 2 max : " << frb2_max.x << " | " << frb2_max.y << " | " << frb2_max.z << std::endl;
-
-            std::cout << "                        " << std::endl;
-
-            std::cout << "Future Camera position : " << futurePos1.x << " | " << futurePos1.y << " | " << futurePos1.z << std::endl;
-            std::cout << "Future Terrain position : " << futurePos2.x << " | " << futurePos2.y << " | " << futurePos2.z << std::endl;
-
-            std::cout << "Camera position : " << rb1.position.x << " | " << rb1.position.y << " | " << rb1.position.z << std::endl;
-            std::cout << "Terrain position : " << rb2.position.x << " | " << rb2.position.y << " | " << rb2.position.z << std::endl;
-
-            std::cout << "                        " << std::endl;
-
-            // print velocity of the two models
-            std::cout << "Velocity of the camera : " << rb1.velocity.x << " | " << rb1.velocity.y << " | " << rb1.velocity.z << std::endl;
-            std::cout << "Velocity of the terrain : " << rb2.velocity.x << " | " << rb2.velocity.y << " | " << rb2.velocity.z << std::endl;
-    
-            std::cout << "                        " << std::endl;
+            }
         }
         else if (!y) {
             collide.collisionNormal.y = glm::normalize(rb1.position - rb2.position).y;
