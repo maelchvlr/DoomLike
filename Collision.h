@@ -99,35 +99,11 @@ CollisionData& willCollide(RigidBody& rb1, RigidBody& rb2, float deltaTime) {
             //V�rification de la Surface de collision
             int CollisionSurface = surface_collider_z_max - surface_collider_z_min * (surface_collider_y_min - surface_collider_y_collision);
 
-            std::cout << "Surface de collision : " << CollisionSurface << std::endl;
-
             if (CollisionSurface > 5.0f) {
                 collide.collisionNormal.x = glm::normalize(rb1.position - rb2.position).x;
                 collide.CollisionDetected = true;
             }			
-            std::cout << "Collision normal in X axis : " << collide.collisionNormal.x << std::endl;
 
-            std::cout << "Future rigidbody 1 min : " << frb1_min.x << " | " << frb1_min.y << " | " << frb1_min.z << std::endl;
-            std::cout << "Future rigidbody 1 max : " << frb1_max.x << " | " << frb1_max.y << " | " << frb1_max.z << std::endl;
-
-            std::cout << "Future rigidbody 2 min : " << frb2_min.x << " | " << frb2_min.y << " | " << frb2_min.z << std::endl;
-            std::cout << "Future rigidbody 2 max : " << frb2_max.x << " | " << frb2_max.y << " | " << frb2_max.z << std::endl;
-
-            std::cout << "                        " << std::endl;
-
-            std::cout << "Future Camera position : " << futurePos1.x << " | " << futurePos1.y << " | " << futurePos1.z << std::endl;
-            std::cout << "Future Terrain position : " << futurePos2.x << " | " << futurePos2.y << " | " << futurePos2.z << std::endl;
-
-            std::cout << "Camera position : " << rb1.position.x << " | " << rb1.position.y << " | " << rb1.position.z << std::endl;
-            std::cout << "Terrain position : " << rb2.position.x << " | " << rb2.position.y << " | " << rb2.position.z << std::endl;
-
-            std::cout << "                        " << std::endl;
-
-            // print velocity of the two models
-            std::cout << "Velocity of the camera : " << rb1.velocity.x << " | " << rb1.velocity.y << " | " << rb1.velocity.z << std::endl;
-            std::cout << "Velocity of the terrain : " << rb2.velocity.x << " | " << rb2.velocity.y << " | " << rb2.velocity.z << std::endl;
-    
-            std::cout << "                        " << std::endl;
         }
         else if (!y) {
             collide.collisionNormal.y = glm::normalize(rb1.position - rb2.position).y;

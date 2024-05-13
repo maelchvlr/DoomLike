@@ -19,6 +19,7 @@
 
 #include "Actor.h"
 #include "Player.h"
+#include "Enemy.h"
 
 #include "Shader.h"
 #include "VAO.h"
@@ -119,7 +120,11 @@ int main() {
     // Create the camera
     Camera* camera = new Camera(width, height, glm::vec3(0.0f, 4.0f, 2.0f), &shaderProgram.ID);
 
+    // Player
     Player player = Player(camera->rb->getPosition(), *camera);
+
+    // Enemy
+    Enemy enemy(glm::vec3(5.0f, 1.0f, 5.0f), 2.0f);
 
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
@@ -141,6 +146,11 @@ int main() {
 
         // Use the shader program
         shaderProgram.Activate();
+
+        // handle enemy
+        enemy.Update(deltaTime);
+        enemy.Render(&shaderProgram, deltaTime);
+        enemy.IsPlayerInRadius(player.getRigidBodyPosition());
 
         // Draw the cube(s)
         for (Cube* cube : cubes) {
@@ -169,6 +179,7 @@ int main() {
             }
             // Camera x terrains
             handlePredictiveCollision(camera->rb, terrain->getRigidBody(), deltaTime, "camera terrain");
+            handlePredictiveCollision(enemy.GetRigidBody(), terrain->getRigidBody(), deltaTime, "player terrain");
         }
 
         for (Cube* cube1 : cubes) {
@@ -183,6 +194,8 @@ int main() {
         // Player
         player.Update(deltaTime);
         player.UpdateCamera(deltaTime, window, shaderProgram);
+
+        
 
         glfwSwapBuffers(window);    // Swap front and back buffers
         glfwPollEvents();	        // Poll for and process events

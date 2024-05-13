@@ -3,6 +3,7 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
+
 Cube::Cube(glm::vec3 center, glm::vec3 _size, bool _Textured, Texture* _Texture, float mass, float restitution, bool movable)
     : Models(mass, restitution, movable, _Textured, _Texture, center, _size)
 {
@@ -71,6 +72,7 @@ void Cube::Draw(Shader *shaderProgram, float dt)
 {
     rb.update(dt);
 	glm::mat4 model = glm::translate(glm::mat4(1.0f), rb.position);
+    model = glm::scale(model, size);
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram->ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
     if(textured)
