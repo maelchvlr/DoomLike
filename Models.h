@@ -21,7 +21,7 @@ class Models
 {
 public:
 	
-	Models(float mass, float restitution, bool movable, bool _Textured = false, Texture* _Texture = nullptr, glm::vec3 center = glm::vec3(0), glm::vec3 size = glm::vec3(1));
+	Models(float mass, float restitution, bool movable, bool _Textured = false, Texture* _Texture = nullptr, glm::vec3 center = glm::vec3(0), glm::vec3 _size = glm::vec3(1));
 	~Models();
 
 	void init(GLfloat* vertices, int sizeVer, GLuint indices[], int sizeInd);
@@ -41,6 +41,7 @@ protected:
 	// Texture for the model
 	bool textured;
 	Texture* texture;
+	glm::vec3 size;
 };
 
 #endif // !MODELS_H

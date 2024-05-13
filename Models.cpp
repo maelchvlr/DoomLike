@@ -1,11 +1,12 @@
 #include "Models.h"
 
-Models::Models(float mass, float restitution, bool movable, bool _Textured, Texture* _Texture, glm::vec3 center, glm::vec3 size) 
-	: rb (mass, restitution, movable, size, center, glm::vec3(0.0f), glm::vec3(0.0f))
+Models::Models(float mass, float restitution, bool movable, bool _Textured, Texture* _Texture, glm::vec3 center, glm::vec3 _size) 
+	: rb (mass, restitution, movable, _size, center, glm::vec3(0.0f), glm::vec3(0.0f))
 {
 	textured = _Textured;
 	texture = _Texture;
 	rb.position = center;
+	size = _size;
 }
 
 Models::~Models() {

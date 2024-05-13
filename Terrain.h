@@ -14,7 +14,6 @@ public:
 
 private:
 
-    glm::vec3 size; // Scale of the terrain
     //void setupMesh() //je sais pas trop ce qu'on peut en faire ?
 };
 

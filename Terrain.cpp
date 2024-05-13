@@ -5,7 +5,7 @@
 #include <gtc/type_ptr.hpp>
 
 Terrain::Terrain(std::string path, glm::vec3 topLeft, glm::vec3 _size, bool _Textured, Texture* _Texture, float mass, float restitution, bool movable)
-    : Models(mass, restitution, movable, _Textured, _Texture, topLeft, _size), size(_size)
+    : Models(mass, restitution, movable, _Textured, _Texture, topLeft, _size)
 {
     //Idem que pour le main, on ouvre le fichier puis on stocke les valeurs dans un tableau de vertices
     std::ifstream fichier(path);

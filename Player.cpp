@@ -7,7 +7,7 @@ Player::Player(glm::vec3 position, Camera& _camera)
 
 void Player::Update(float dt)
 {
-    rb = *camera.rb;
+    rb = camera.rb;
 }
 
 void Player::UpdateCamera(float dt, GLFWwindow* window, Shader& shaderProgram) {
