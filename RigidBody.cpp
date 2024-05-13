@@ -16,12 +16,24 @@ void RigidBody::update(float dt) {
 	velocity += acceleration * dt;
 }
 
-void RigidBody::dampen()
-{
-	const float stopThreshold = 0.08f; // Threshold for when to completely stop the object
+void RigidBody::dampen() {
+	const float individualStopThreshold = 0.01f; // Threshold for when to completely stop the object
+	const float stopThreshold = 0.01f; // Threshold for when to stop simulating the object
+
+	if (abs(velocity.x) < individualStopThreshold) {
+		velocity.x = 0.f;
+	}
+	if (abs(velocity.y) < individualStopThreshold)
+	{
+		velocity.y = 0.f;
+		stopSimulate();
+	}
+	if (abs(velocity.z) < individualStopThreshold)
+	{
+		velocity.z = 0.f;
+	}
 
 	if (abs(glm::length(velocity)) < stopThreshold) {
-		velocity = glm::vec3(0.0f);
 		stopSimulate();
 	}
 }
