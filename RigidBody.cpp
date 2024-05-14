@@ -23,16 +23,13 @@ void RigidBody::dampen() {
 	if (abs(velocity.x) < individualStopThreshold) {
 		velocity.x = 0.f;
 	}
-	if (abs(velocity.y) < individualStopThreshold)
-	{
+	if (abs(velocity.y) < individualStopThreshold) {
 		velocity.y = 0.f;
 		stopSimulate();
 	}
-	if (abs(velocity.z) < individualStopThreshold)
-	{
+	if (abs(velocity.z) < individualStopThreshold) {
 		velocity.z = 0.f;
 	}
-
 	if (abs(glm::length(velocity)) < stopThreshold) {
 		stopSimulate();
 	}

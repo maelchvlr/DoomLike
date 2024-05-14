@@ -2,7 +2,7 @@
 
 Camera::Camera(int width, int height, glm::vec3 position, GLuint *shaderProgram) 
 {
-	Camera::rb = new RigidBody(10.0f, 0.0f, true, glm::vec3(0.5, 1, 0.5), position, glm::vec3(0.0f));
+	Camera::rb = new RigidBody(10.0f, 0.1f, true, glm::vec3(0.5, 1, 0.5), position, glm::vec3(0.0f));
 	shader = *shaderProgram;
 	Camera::width = width;
 	Camera::height = height;

@@ -67,13 +67,13 @@ int main() {
     std::vector<Cube*> cubes;
 
     // Cubes
-    Cube* newCube1 = new Cube(glm::vec3(1.4, 4, 1), glm::vec3(1), true, &crateTex, 0.1f, 1);
+    Cube* newCube1 = new Cube(glm::vec3(1.4, 4, 1), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
     cubes.push_back(newCube1);
-    Cube* newCube2 = new Cube(glm::vec3(1, 3, 1), glm::vec3(1), true, &crateTex, 0.5f);
+    Cube* newCube2 = new Cube(glm::vec3(1, 3, 1), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
     cubes.push_back(newCube2);
-    Cube* newCube3 = new Cube(glm::vec3(3, 4, 3), glm::vec3(1), true, &crateTex, 2.f, 0);
+    Cube* newCube3 = new Cube(glm::vec3(3, 4, 4), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
     cubes.push_back(newCube3);
-    Cube* newCube4 = new Cube(glm::vec3(3, 4, 1), glm::vec3(1), true, &crateTex, 5.f);
+    Cube* newCube4 = new Cube(glm::vec3(3, 4, 1), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
     cubes.push_back(newCube4);
 
     // Terrains
@@ -188,14 +188,13 @@ int main() {
 				// Cube x Cube collisions
                 handlePredictiveCollision(cube1->getRigidBody(), cube2->getRigidBody(), deltaTime, "cube x cube");
 			}
+            // Camera x cubes
             handlePredictiveCollision(camera->rb, cube1->getRigidBody(), deltaTime, "camera x cube");
         }
         
         // Player
         player.Update(deltaTime);
         player.UpdateCamera(deltaTime, window, shaderProgram);
-
-        
 
         glfwSwapBuffers(window);    // Swap front and back buffers
         glfwPollEvents();	        // Poll for and process events

@@ -23,7 +23,7 @@ bool Enemy::IsPlayerInRadius(const glm::vec3& playerPosition) {
     float distanceSq = glm::distance2(rb->position, playerPosition);
     bool isPlayerInRadius = distanceSq <= (detectionRadius * detectionRadius);
     if (isPlayerInRadius) {
-        std::cout << "Player is in radius!" << std::endl;
+        //std::cout << "Player is in radius!" << std::endl;
 
         // slowly move towards player
         glm::vec3 direction = glm::normalize(playerPosition - rb->position);

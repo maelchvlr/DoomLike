@@ -55,7 +55,6 @@ CollisionData& willCollide(RigidBody& rb1, RigidBody& rb2, float deltaTime) {
         //std::cout << "Collide : " << x << " | " << y << " | " << z << std::endl;
 
         if (!x) {
-
             //Variables pour la surface de collision
             float surface_collider_z_min = 0;
             float surface_collider_z_max = 0;
@@ -112,10 +111,12 @@ CollisionData& willCollide(RigidBody& rb1, RigidBody& rb2, float deltaTime) {
             float CollisionSurface = (surface_collider_z_max - surface_collider_z_min) * (surface_collider_y_collision - surface_collider_y_min);
 
             if (CollisionSurface > 0.1f) {
-
                 std::cout << "COLLISION DETECTED ! " << std::endl;
                 std::cout << "Collision surface : " << CollisionSurface << std::endl;
                 collide.collisionNormal.x = glm::normalize(rb1.position - rb2.position).x;
+                //std::cout << "Rb1 position : " << rb1.position.x << " | " << rb1.position.y << " | " << rb1.position.z << std::endl;
+                //std::cout << "Rb2 position : " << rb2.position.x << " | " << rb2.position.y << " | " << rb2.position.z << std::endl;
+                //std::cout << "Collision normal in X axis : " << collide.collisionNormal.x << std::endl;
                 collide.CollisionDetected = true;
             }
         }
@@ -140,7 +141,7 @@ void applyImpulse(RigidBody& rb1, RigidBody& rb2, const glm::vec3& collisionNorm
     glm::vec3 relativeVelocity = abs(rb2.velocity - rb1.velocity);
 
     //dot product : x1*x2 + y1*y2 + z1*z2
-    float velocityAlongNormal = glm::dot(relativeVelocity, collisionNormal);
+    float velocityAlongNormal = abs(glm::dot(relativeVelocity, collisionNormal));
 
     // They are moving apart, so no impulse is necessary
     if (velocityAlongNormal < 0) return;
@@ -149,13 +150,25 @@ void applyImpulse(RigidBody& rb1, RigidBody& rb2, const glm::vec3& collisionNorm
     float restitution = std::min(rb1.restitution, rb2.restitution);
 
     float j = restitution * velocityAlongNormal;
+    
+    if (collisionNormal.x != 0) {
+        std::cout << "                          " << std::endl;
+        std::cout << "Restitution : " << restitution << std::endl;
+        std::cout << "Velocity Along Normal : " << velocityAlongNormal << std::endl;
+        std::cout << "J : " << j << std::endl;
+    }
 
     // apply the mass on the object to prevent it to just bounce to the infinity
     j *= rb1.getInverseMass() + rb2.getInverseMass();
+    
+    glm::vec3 impulse = abs(j * collisionNormal);
 
-    glm::vec3 impulse = j * collisionNormal;
+    if (collisionNormal.x != 0) {
+        std::cout << "J2 : " << j << std::endl;
+        std::cout << "Impulse : " << impulse.x << " | " << impulse.y << " | " << impulse.z << std::endl;
 
-    //std::cout << "Impulse : " << impulse.x << " | " << impulse.y << " | " << impulse.z << std::endl;
+        std::cout << "                           " << std::endl;
+    }
 
     // Apply the impulse to the two models to make them bounce
     if (collisionNormal.x != 0) {
@@ -171,11 +184,6 @@ void applyImpulse(RigidBody& rb1, RigidBody& rb2, const glm::vec3& collisionNorm
         rb2.velocity.z = -rb2.velocity.z * impulse.z;
 	}
 
-    /*
-    rb1.velocity = -rb1.velocity * impulse;
-    rb2.velocity = -rb2.velocity * impulse;
-    */
-
     //Verify if the object is moving behind a certain threshold
     rb1.dampen();
     rb2.dampen();
@@ -186,7 +194,6 @@ void handlePredictiveCollision(RigidBody* rb1, RigidBody* rb2, float deltaTime, 
     CollisionData collisionData = willCollide(*rb1, *rb2, deltaTime);
 
     if (collisionData.CollisionDetected) {
-        //std::cout << "RigidBody tag : " << tag << std::endl;
         //If the two models will collide
         rb1->startSimulate();
         rb2->startSimulate();
