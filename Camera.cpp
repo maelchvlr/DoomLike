@@ -1,6 +1,7 @@
 #include "Camera.h"
 
-Camera::Camera(int width, int height, glm::vec3 position, GLuint *shaderProgram) 
+Camera::Camera(int width, int height, glm::vec3 position, GLuint* shaderProgram)
+	: FOVdeg(45.0f), nearPlane(0.1f), farPlane(100.0f)
 {
 	Camera::rb = new RigidBody(10.0f, 0.1f, true, glm::vec3(0.5, 1, 0.5), position, glm::vec3(0.0f));
 	shader = *shaderProgram;
@@ -8,7 +9,7 @@ Camera::Camera(int width, int height, glm::vec3 position, GLuint *shaderProgram)
 	Camera::height = height;
 }
 
-void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, const char* uniform, Shader* shaderProgram, float dt)
+void Camera::Matrix(const char* uniform, Shader* shaderProgram, float dt)
 {
 	rb->startSimulate();
 	if (!flymode) {
@@ -104,6 +105,16 @@ void Camera::Inputs(GLFWwindow* window) {
 		speed = 0.1f;
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+		gameEntered = true;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		gameEntered = false;
+		firstClick = true;
+	}
+
+	if (gameEntered)
+	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 		if (firstClick) {
@@ -130,8 +141,5 @@ void Camera::Inputs(GLFWwindow* window) {
 
 		glfwSetCursorPos(window, (width / 2), (height / 2));
 	}
-	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		firstClick = true;
-	}
+
 }

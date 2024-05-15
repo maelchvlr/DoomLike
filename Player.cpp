@@ -12,5 +12,5 @@ void Player::Update(float dt)
 
 void Player::UpdateCamera(float dt, GLFWwindow* window, Shader& shaderProgram) {
     camera.Inputs(window);
-    camera.Matrix(45.0f, 0.1f, 100.0f, "camMatrix", &shaderProgram, dt);
+    camera.Matrix("camMatrix", &shaderProgram, dt);
 }

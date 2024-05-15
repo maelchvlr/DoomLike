@@ -31,6 +31,8 @@
 const unsigned int width = 800;
 const unsigned int height = 800;
 
+void drawCrossair();
+
 int main() {
     // Initialize GLFW
     if (!glfwInit()) {
@@ -78,15 +80,15 @@ int main() {
 
     // Terrains
 
-    //Défini le path vers le dossier des terrains et itère dedans
+    //Dï¿½fini le path vers le dossier des terrains et itï¿½re dedans
     std::filesystem::path terrainPath = "./ressources/map/";
     for (const auto& terrain : std::filesystem::directory_iterator(terrainPath)) {
         //Ouverture du fichier cible dans le dossier map
         std::ifstream fichier(terrain.path().string());
 
-        //On récupère les coordonnées du coin supérieur gauche du terrain (Les 3 premières valeurs du fichier cible)
+        //On rï¿½cupï¿½re les coordonnï¿½es du coin supï¿½rieur gauche du terrain (Les 3 premiï¿½res valeurs du fichier cible)
         const int taille = 3;
-        //On définit une taille fixe pour scale les morceau de terrain (arbitraire)
+        //On dï¿½finit une taille fixe pour scale les morceau de terrain (arbitraire)
         glm::vec3 scale = glm::vec3(6, 0, 6);
         //On initialise un tableau de float pour stocker les valeurs du topLeftCorner initial
         float topLeftCoord[taille];
@@ -94,7 +96,7 @@ int main() {
         if (fichier) {
             for (int i = 0; i < taille; i++) {
                 float valeur;
-                fichier >> valeur;  // On lit un chiffre dans le fichier et on déplace le curseur sur le prochain float (type de la variable valeur)
+                fichier >> valeur;  // On lit un chiffre dans le fichier et on dï¿½place le curseur sur le prochain float (type de la variable valeur)
                 topLeftCoord[i] = valeur;   //On stock les valeurs pour le topLeftCorner
             }
             fichier.close();
@@ -105,7 +107,7 @@ int main() {
 
         //On scale le topLeftCorner en fonction de la taille du terrain (scale)
         glm::vec3 topLeftCorner = glm::vec3(topLeftCoord[0] * scale.x, topLeftCoord[1] * scale.y, topLeftCoord[2] * scale.z);
-        //On définit le centre du terrain en fonction du topLeftCorner et du scale pour éviter les décalages avec le rigidBody
+        //On dï¿½finit le centre du terrain en fonction du topLeftCorner et du scale pour ï¿½viter les dï¿½calages avec le rigidBody
         glm::vec3 center = topLeftCorner + scale / 2.0f;
         
         //On initialise le terrain et on le stocke dans le vecteur des terrains
@@ -146,6 +148,9 @@ int main() {
 
         // Use the shader program
         shaderProgram.Activate();
+
+        // crossair
+        drawCrossair();
 
         // handle enemy
         enemy.Update(deltaTime);
@@ -196,13 +201,11 @@ int main() {
         player.Update(deltaTime);
         player.UpdateCamera(deltaTime, window, shaderProgram);
 
+        // crossair
+        drawCrossair();
+
         glfwSwapBuffers(window);    // Swap front and back buffers
         glfwPollEvents();	        // Poll for and process events
-
-        // Close the window if the escape key is pressed
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-            glfwSetWindowShouldClose(window, true);
-        }
     }
 
     // De-allocate resources
@@ -218,4 +221,24 @@ int main() {
     glfwTerminate();
 
 	return 0;
+}
+
+void drawCrossair(Camera* camera) {
+   // center point of the camera, using cam projection
+    glm::vec2 center = glm::vec2(width / 2, height / 2);
+
+    // crossair size
+    float size = 0.01f;
+
+    // crossair position
+    float x = center.x;
+    float y = center.y;
+
+    // draw crossair
+    glBegin(GL_LINES);
+    glVertex2f(x - size, y);
+    glVertex2f(x + size, y);
+    glVertex2f(x, y - size);
+    glVertex2f(x, y + size);
+    glEnd();
 }

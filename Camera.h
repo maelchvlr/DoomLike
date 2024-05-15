@@ -31,11 +31,16 @@ public:
 
 	Camera(int width, int height, glm::vec3 position,GLuint *shaderProgram);
 
-	void Matrix(float FOVdeg, float nearPlane, float farPlane, const char* uniform, Shader* shaderProgram, float dt);
+	void Matrix(const char* uniform, Shader* shaderProgram, float dt);
 	void Inputs(GLFWwindow* window);
 
 private:
 	GLuint shader;
+	bool gameEntered = false;
+
+	float FOVdeg;
+	float nearPlane;
+	float farPlane;
 };
 
 #endif // !CAMERA_CLASS_H
