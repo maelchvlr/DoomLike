@@ -29,6 +29,15 @@ public:
 	virtual RigidBody* getRigidBody() { return &rb; }
 	//virtual void render(Shader shader, float dt);
 
+	void Destroy() {
+		VAOModel.Delete();
+		VBOModel.Delete();
+		EBOModel.Delete();
+		if (textured) {
+			texture->Delete();
+		}
+	}
+
 protected:
 	// OpenGL IDs for vertex array, vertex buffer, and element buffer objects
 	VAO VAOModel;

@@ -28,10 +28,10 @@
 
 #include "Collision.h"
 
-const unsigned int width = 800;
-const unsigned int height = 800;
+const unsigned int width = 1000;
+const unsigned int height = 1000;
 
-void drawCrossair();
+void drawCrosshair();
 
 int main() {
     // Initialize GLFW
@@ -78,6 +78,9 @@ int main() {
     Cube* newCube4 = new Cube(glm::vec3(3, 4, 1), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
     cubes.push_back(newCube4);
 
+    Cube* raycastCube = new Cube(glm::vec3(0, 0, 0), glm::vec3(0.2), true, &crateTex, 2.f, 0.5f);
+    cubes.push_back(raycastCube);
+
     // Terrains
 
     //D�fini le path vers le dossier des terrains et it�re dedans
@@ -122,11 +125,18 @@ int main() {
     // Create the camera
     Camera* camera = new Camera(width, height, glm::vec3(0.0f, 4.0f, 2.0f), &shaderProgram.ID);
 
+    // Create the orthographic projection matrix
+    glm::mat4 orthoProjection = glm::ortho(0.0f, (float)width, (float)height, 0.0f, -1.0f, 1.0f);
+
     // Player
     Player player = Player(camera->rb->getPosition(), *camera);
 
+    // raycast
+    std::vector<glm::vec3> raycast;
+
     // Enemy
     Enemy enemy(glm::vec3(5.0f, 1.0f, 5.0f), 2.0f);
+    bool enemyAlive = true;
 
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
@@ -149,13 +159,19 @@ int main() {
         // Use the shader program
         shaderProgram.Activate();
 
-        // crossair
-        drawCrossair();
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "orthoProjection"), 1, GL_FALSE, glm::value_ptr(orthoProjection));
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 1.0f, 1.0f, 1.0f);
+        glUniform1i(glGetUniformLocation(shaderProgram.ID, "is2D"), 1);
+        drawCrosshair();
+        glUniform1i(glGetUniformLocation(shaderProgram.ID, "is2D"), 0);
 
         // handle enemy
-        enemy.Update(deltaTime);
-        enemy.Render(&shaderProgram, deltaTime);
-        enemy.IsPlayerInRadius(player.getRigidBodyPosition());
+        if(enemyAlive)
+		{
+			enemy.Update(deltaTime);
+			enemy.Render(&shaderProgram, deltaTime);
+			enemy.IsPlayerInRadius(player.getRigidBodyPosition());
+		}
 
         // Draw the cube(s)
         for (Cube* cube : cubes) {
@@ -200,9 +216,36 @@ int main() {
         // Player
         player.Update(deltaTime);
         player.UpdateCamera(deltaTime, window, shaderProgram);
+        raycast = player.RayCast(window);
 
-        // crossair
-        drawCrossair();
+        if (!(raycast[1] == glm::vec3(0.0f, 0.0f, 0.0f)))
+        {
+
+            // Calculate the vector from the player's position to the enemy's position
+            glm::vec3 playerToEnemy = enemy.GetPosition() - raycast[0];
+
+            // Calculate the distance from the player's position to the enemy's position projected onto the ray direction
+            float distanceAlongRay = glm::dot(playerToEnemy, glm::normalize(raycast[1] - raycast[0]));
+
+            // Check if the enemy is in front of the player and within the range of the raycast
+            if (distanceAlongRay > 0 && distanceAlongRay < glm::length(raycast[1] - raycast[0])) {
+                // Calculate the angle between the player's view direction and the vector from the player to the enemy
+                float angle = glm::degrees(glm::acos(glm::dot(glm::normalize(playerToEnemy), glm::normalize(raycast[1] - raycast[0]))));
+
+                // Check if the angle is within a certain threshold (e.g., player's field of view)
+                float fieldOfViewThreshold = 1.0f; // Adjust this threshold as needed
+                if (angle < fieldOfViewThreshold) {
+                    // The enemy is in the player's line of sight
+                    std::cout << "Enemy detected in line of sight!" << std::endl;
+                    enemyAlive = false;
+                    enemy.Destroy();
+
+                }
+            }
+
+        }
+
+
 
         glfwSwapBuffers(window);    // Swap front and back buffers
         glfwPollEvents();	        // Poll for and process events
@@ -223,22 +266,49 @@ int main() {
 	return 0;
 }
 
-void drawCrossair(Camera* camera) {
-   // center point of the camera, using cam projection
-    glm::vec2 center = glm::vec2(width / 2, height / 2);
 
-    // crossair size
-    float size = 0.01f;
+void drawCrosshair() {
 
-    // crossair position
-    float x = center.x;
-    float y = center.y;
+    // taille des branches du viseur
+    float crosshairSize = 10.0f;
 
-    // draw crossair
-    glBegin(GL_LINES);
-    glVertex2f(x - size, y);
-    glVertex2f(x + size, y);
-    glVertex2f(x, y - size);
-    glVertex2f(x, y + size);
-    glEnd();
+    // Position du centre du viseur
+    float centerX = width / 2.0f;
+    float centerY = height / 2.0f;
+
+    // Vertices du viseur
+    GLfloat vertices[] = {
+        // Horizontal line
+        centerX - crosshairSize, centerY, 0.0f,
+        centerX + crosshairSize, centerY, 0.0f,
+        // Vertical line
+        centerX, centerY - crosshairSize, 0.0f,
+        centerX, centerY + crosshairSize, 0.0f
+    };
+
+
+    // setup des VAO et VBO
+    GLuint VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    // Render le crosshair
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_LINES, 0, 4);
+    glBindVertexArray(0);
+
+    // Cleanup
+    glDeleteBuffers(1, &VBO);
+    glDeleteVertexArrays(1, &VAO);
 }

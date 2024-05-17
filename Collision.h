@@ -8,17 +8,6 @@ struct CollisionData {
     glm::vec3 collisionNormal = glm::vec3(0);
 };
 
-// Utility to calculate collision normal based on predictive positions
-glm::vec3 calculateCollisionNormal(RigidBody& rb1, RigidBody& rb2) {
-    //glm::vec3 normalProcessing = glm::vec3(0.0f);
-
-    glm::vec3 direction = rb1.position - rb2.position;
-    glm::vec3 normal = glm::normalize(direction);
-    
-    //return normal;
-    return glm::vec3(0, -1, 0);
-}
-
 // Checks if two models will collide based on their current velocities and positions
 CollisionData& willCollide(RigidBody& rb1, RigidBody& rb2, float deltaTime) {
 

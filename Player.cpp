@@ -14,3 +14,8 @@ void Player::UpdateCamera(float dt, GLFWwindow* window, Shader& shaderProgram) {
     camera.Inputs(window);
     camera.Matrix("camMatrix", &shaderProgram, dt);
 }
+
+std::vector<glm::vec3> Player::RayCast(GLFWwindow* window)
+{
+    return camera.RayCast(window);
+}

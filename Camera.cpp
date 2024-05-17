@@ -3,7 +3,7 @@
 Camera::Camera(int width, int height, glm::vec3 position, GLuint* shaderProgram)
 	: FOVdeg(45.0f), nearPlane(0.1f), farPlane(100.0f)
 {
-	Camera::rb = new RigidBody(10.0f, 0.1f, true, glm::vec3(0.5, 1, 0.5), position, glm::vec3(0.0f));
+	Camera::rb = new RigidBody(10.0f, 0.0f, true, glm::vec3(0.5, 1, 0.5), position, glm::vec3(0.0f));
 	shader = *shaderProgram;
 	Camera::width = width;
 	Camera::height = height;
@@ -19,12 +19,9 @@ void Camera::Matrix(const char* uniform, Shader* shaderProgram, float dt)
 	//std::cout << "Camera position: " << rb->position.x << " " << rb->position.y << " " << rb->position.z << std::endl;
 	//std::cout << "Camera velocity: " << rb->velocity.x << " " << rb->velocity.y << " " << rb->velocity.z << std::endl;
 
-	glm::mat4 view = glm::mat4(1.0f);
-	glm::mat4 projection = glm::mat4(1.0f);
-
 	//Update the view matrix depending of the orientation and the direction of the camera
 	view = glm::lookAt(rb->position, rb->position + Orientation, Up);
-	projection = glm::perspective(glm::radians(FOVdeg), (float)(width / height), nearPlane, farPlane);
+	projection = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
 
 	//Pass the matrices to the shader
 	glUniformMatrix4fv(glGetUniformLocation(shader, uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
@@ -137,9 +134,32 @@ void Camera::Inputs(GLFWwindow* window) {
 			Orientation = newOrientation;
 		}
 
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+			gameEntered = true;
+		}
+
 		Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
 
 		glfwSetCursorPos(window, (width / 2), (height / 2));
 	}
 
 }
+
+std::vector<glm::vec3> Camera::RayCast(GLFWwindow* window)
+{
+	std::vector<glm::vec3> raycast = { glm::vec3(0.0f), glm::vec3(0.0f) };
+
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+		// cast in front of the player
+		glm::vec3 rayStart = rb->position;
+		glm::vec3 rayEnd = rb->position + Orientation * 100.0f;
+
+		//store the raycast in a vector
+		raycast = { rayStart, rayEnd };
+	}
+	
+
+	return raycast;
+}
+
+

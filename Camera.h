@@ -5,6 +5,7 @@
 #include <glew.h>
 #include <glfw3.h>
 #include <glm.hpp>
+#include <vector>
 #include "RigidBody.h"
 #include "Shader.h"
 #include <gtc/matrix_transform.hpp>
@@ -19,6 +20,8 @@ public:
 
 	glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::mat4 view = glm::mat4(1.0f);
+	glm::mat4 projection = glm::mat4(1.0f);
 
 	bool firstClick = true;
 
@@ -33,6 +36,8 @@ public:
 
 	void Matrix(const char* uniform, Shader* shaderProgram, float dt);
 	void Inputs(GLFWwindow* window);
+
+	std::vector<glm::vec3> RayCast(GLFWwindow* window);
 
 private:
 	GLuint shader;

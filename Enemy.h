@@ -11,6 +11,10 @@ public:
     void Render(Shader* shader, float dt);
     bool IsPlayerInRadius(const glm::vec3& playerPosition);
     RigidBody* GetRigidBody() { return cube->getRigidBody(); }
+    void Destroy() 
+    { 
+        cube->Destroy();
+    }
 
 private:
     float detectionRadius;

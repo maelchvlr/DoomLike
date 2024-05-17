@@ -44,3 +44,4 @@ void RigidBody::stopSimulate() {
 void RigidBody::startSimulate() {
 	simulate = true;
 }
+

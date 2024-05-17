@@ -32,6 +32,7 @@ public:
 	bool isMovable() { return movable; }
 	float getInverseMass() { return !movable ? 0.0f : 1.0f / mass; }
 	glm::vec3 getPosition() { return position; }
+
 };
 
 #endif
