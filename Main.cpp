@@ -16,6 +16,7 @@
 #include "Models.h"
 #include "Cube.h"
 #include "Camera.h"
+#include "Wall.h"
 
 #include "Actor.h"
 #include "Player.h"
@@ -32,6 +33,7 @@ const unsigned int width = 1000;
 const unsigned int height = 1000;
 
 void drawCrosshair();
+bool verifVerticesBy5(float*, int);
 
 int main() {
     // Initialize GLFW
@@ -65,18 +67,21 @@ int main() {
     //Terrain initializer
     std::vector<Terrain*> terrains;
 
+    //Wall initializer
+    std::vector<Wall*> walls;
+
     //Cube initializer
     std::vector<Cube*> cubes;
 
     // Cubes
     Cube* newCube1 = new Cube(glm::vec3(1.4, 4, 1), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
-    cubes.push_back(newCube1);
+    //cubes.push_back(newCube1);
     Cube* newCube2 = new Cube(glm::vec3(1, 3, 1), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
-    cubes.push_back(newCube2);
+    //cubes.push_back(newCube2);
     Cube* newCube3 = new Cube(glm::vec3(3, 4, 4), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
     cubes.push_back(newCube3);
     Cube* newCube4 = new Cube(glm::vec3(3, 4, 1), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
-    cubes.push_back(newCube4);
+    //cubes.push_back(newCube4);
 
     Cube* raycastCube = new Cube(glm::vec3(0, 0, 0), glm::vec3(0.2), true, &crateTex, 2.f, 0.5f);
     cubes.push_back(raycastCube);
@@ -118,6 +123,54 @@ int main() {
         terrains.push_back(newTerrain);
     }
     std::cout << "Terrains loaded" << std::endl;
+
+    // Walls
+
+    std::filesystem::path wallPath = "./ressources/wall/";
+    for (const auto& wall : std::filesystem::directory_iterator(wallPath)) {
+        std::ifstream fichier(wall.path().string());
+
+        //Etant donne que le tableau est entierement parcouru ici, plus la peine de construire le mur 
+        // comme on le faisait avec le Terrain
+        const int taille = 20;
+        glm::vec3 scale = glm::vec3(6, 6, 6);
+        float vertices[taille];
+
+        if (fichier) {
+            for (int i = 0; i < taille; i++) {
+                float valeur;
+                fichier >> valeur;  // On lit un chiffre dans le fichier et on deplace le curseur sur le prochain float (type de la variable valeur)
+                vertices[i] = valeur;   //On stock les valeurs pour le topLeftCorner
+            }
+            fichier.close();
+        }
+        else {
+            std::cout << "Erreur lors de l'acquisition du TopLeftCorner ! " << wall.path().string() << " " << std::endl;
+        }
+
+        //On scale le topLeftCorner en fonction de la taille du terrain (scale)
+        glm::vec3 bottomLeftCorner = glm::vec3(vertices[0] * scale.x, vertices[1] * scale.y, vertices[2] * scale.z);
+
+        //Verif la direction dans laquelle est orientee le mur
+        glm::vec3 center;
+        if (verifVerticesBy5(vertices, 0)) {
+            scale = glm::vec3(0, scale.y, scale.z);
+            center = glm::vec3(0, bottomLeftCorner.y + scale.y / 2.0f, bottomLeftCorner.z + scale.z / 2.0);
+        }
+        else if (verifVerticesBy5(vertices, 1)) {
+            scale = glm::vec3(scale.x, 0, scale.z);    //En soit, un mur avec un y a 0 est un sol ? (a creuser)
+            center = glm::vec3(bottomLeftCorner.x + scale.x / 2.0f, 0, bottomLeftCorner.z + scale.z / 2.0);
+        }
+        else if (verifVerticesBy5(vertices, 2)) {   //Derniere verification non obligatoire
+            scale = glm::vec3(scale.x, scale.y, 0);
+            center = glm::vec3(bottomLeftCorner.x + scale.x / 2.0f, bottomLeftCorner.y + scale.y / 2.0f, 0);
+        }
+
+        //On initialise le terrain et on le stocke dans le vecteur des terrains
+        Wall* newWall = new Wall(wall.path().string(), center, scale, false, nullptr, 50.0f, 0.5);
+        walls.push_back(newWall);
+    }
+    std::cout << "Walls loaded" << std::endl;
 
     // Load the shader program
     Shader shaderProgram = Shader("VertexShader.glsl", "FragmentShader.glsl");
@@ -166,8 +219,7 @@ int main() {
         glUniform1i(glGetUniformLocation(shaderProgram.ID, "is2D"), 0);
 
         // handle enemy
-        if(enemyAlive)
-		{
+        if(enemyAlive) {
 			enemy.Update(deltaTime);
 			enemy.Render(&shaderProgram, deltaTime);
 			enemy.IsPlayerInRadius(player.getRigidBodyPosition());
@@ -189,6 +241,10 @@ int main() {
             terrain->Draw(&shaderProgram, deltaTime);
         }
 
+        for (auto wall : walls) {
+            wall->Draw(&shaderProgram, deltaTime);
+        }
+
         dirtTex.Unbind();
         glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 0);
 
@@ -196,11 +252,11 @@ int main() {
         for (Terrain* terrain : terrains) {
             for (Cube* cube : cubes) {
                 // Cubes x terrains
-                handlePredictiveCollision(cube->getRigidBody(), terrain->getRigidBody(), deltaTime, "cube terrain");
+                handlePredictiveCollision(cube->getRigidBody(), terrain->getRigidBody(), deltaTime, "cube x terrain");
             }
             // Camera x terrains
-            handlePredictiveCollision(camera->rb, terrain->getRigidBody(), deltaTime, "camera terrain");
-            handlePredictiveCollision(enemy.GetRigidBody(), terrain->getRigidBody(), deltaTime, "player terrain");
+            handlePredictiveCollision(camera->rb, terrain->getRigidBody(), deltaTime, "camera x terrain");
+            handlePredictiveCollision(enemy.GetRigidBody(), terrain->getRigidBody(), deltaTime, "player x terrain");
         }
 
         for (Cube* cube1 : cubes) {
@@ -213,6 +269,11 @@ int main() {
             handlePredictiveCollision(camera->rb, cube1->getRigidBody(), deltaTime, "camera x cube");
         }
         
+        for (Wall* wall : walls) {
+            // Camera x wall
+            handlePredictiveCollision(camera->rb, wall->getRigidBody(), deltaTime, "camera x wall");
+        }
+
         // Player
         player.Update(deltaTime);
         player.UpdateCamera(deltaTime, window, shaderProgram);
@@ -220,7 +281,6 @@ int main() {
 
         if (!(raycast[1] == glm::vec3(0.0f, 0.0f, 0.0f)))
         {
-
             // Calculate the vector from the player's position to the enemy's position
             glm::vec3 playerToEnemy = enemy.GetPosition() - raycast[0];
 
@@ -239,13 +299,9 @@ int main() {
                     std::cout << "Enemy detected in line of sight!" << std::endl;
                     enemyAlive = false;
                     enemy.Destroy();
-
                 }
             }
-
         }
-
-
 
         glfwSwapBuffers(window);    // Swap front and back buffers
         glfwPollEvents();	        // Poll for and process events
@@ -259,6 +315,9 @@ int main() {
 
     for (auto terrain : terrains)
         terrain->~Terrain();
+
+    for (auto wall : walls)
+        wall->~Wall();
 
     // Terminate GLFW
     glfwTerminate();
@@ -311,4 +370,19 @@ void drawCrosshair() {
     // Cleanup
     glDeleteBuffers(1, &VBO);
     glDeleteVertexArrays(1, &VAO);
+}
+
+// Prend un entier i et verifie avec un offset de 5 les valeurs du tableau
+// Cette fonction est a utiliser specifiquement pour la verification des vertices
+bool verifVerticesBy5(float *vertices, int i) {
+    if (vertices[i] == vertices[i + 5]) {           //Exemple : 2 et 7
+        i += 5;
+        if (vertices[i] == vertices[i + 5]) {       // 7 et 12
+            i += 5;
+            if (vertices[i] == vertices[i + 5]) {   // 12 et 17
+                return true;
+            }
+        }
+    }
+    return false;
 }

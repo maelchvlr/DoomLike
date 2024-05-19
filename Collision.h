@@ -18,6 +18,11 @@ CollisionData& willCollide(RigidBody& rb1, RigidBody& rb2, float deltaTime) {
     glm::vec3 futurePos2 = rb2.position + rb2.velocity * deltaTime;
 
     //Re define the min and max of the two future models
+
+    //Ici, on prend en compte la size des rb qui rentrent en collision. Cela
+    // peut etre problematique dans le cas d'une collision avec une surface plate comme un mur 
+    // mais ayant un taille non nulle car pouvant etre positionné dans differentes directions
+
     glm::vec3 frb1_min = futurePos1 - rb1.size / 2.0f;
     glm::vec3 frb1_max = futurePos1 + rb1.size / 2.0f;
     glm::vec3 frb2_min = futurePos2 - rb2.size / 2.0f;
@@ -50,9 +55,6 @@ CollisionData& willCollide(RigidBody& rb1, RigidBody& rb2, float deltaTime) {
             float surface_collider_y_collision = 0;
             float surface_collider_y_min = 0;
 
-            //Tout un truc dont j'etais tres fier mais qui ne sert au final a rien ?
-            // A garder par respect pour le temps perdu / sera ptet utile car collision pas parfaites
-            //Formatage des valeurs pour eviter les valeurs negatives
             rb2_max.z = abs(rb2_max.z);
             rb2_min.z = abs(rb2_min.z);
             rb1_max.z = abs(rb1_max.z);
@@ -139,25 +141,11 @@ void applyImpulse(RigidBody& rb1, RigidBody& rb2, const glm::vec3& collisionNorm
     float restitution = std::min(rb1.restitution, rb2.restitution);
 
     float j = restitution * velocityAlongNormal;
-    
-    if (collisionNormal.x != 0) {
-        std::cout << "                          " << std::endl;
-        std::cout << "Restitution : " << restitution << std::endl;
-        std::cout << "Velocity Along Normal : " << velocityAlongNormal << std::endl;
-        std::cout << "J : " << j << std::endl;
-    }
 
     // apply the mass on the object to prevent it to just bounce to the infinity
     j *= rb1.getInverseMass() + rb2.getInverseMass();
     
     glm::vec3 impulse = abs(j * collisionNormal);
-
-    if (collisionNormal.x != 0) {
-        std::cout << "J2 : " << j << std::endl;
-        std::cout << "Impulse : " << impulse.x << " | " << impulse.y << " | " << impulse.z << std::endl;
-
-        std::cout << "                           " << std::endl;
-    }
 
     // Apply the impulse to the two models to make them bounce
     if (collisionNormal.x != 0) {
@@ -183,6 +171,13 @@ void handlePredictiveCollision(RigidBody* rb1, RigidBody* rb2, float deltaTime, 
     CollisionData collisionData = willCollide(*rb1, *rb2, deltaTime);
 
     if (collisionData.CollisionDetected) {
+        if (collisionData.collisionNormal.z != 0) {
+            std::cout << "Collision detected on z" << std::endl;
+            std::cout << tag << std::endl;
+            std::cout << "camera rb position : " << rb1->position.x << " | " << rb1->position.y << " | " << rb1->position.z << std::endl;
+            std::cout << "wall rb position : " << rb2->position.x << " | " << rb2->position.y << " | " << rb2->position.z << std::endl;
+        }
+
         //If the two models will collide
         rb1->startSimulate();
         rb2->startSimulate();
