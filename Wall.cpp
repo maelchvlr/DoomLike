@@ -41,7 +41,11 @@ Wall::~Wall() {
 void Wall::Draw(Shader* shaderProgram, float dt) {
     rb.update(dt);
     //Translation de la matrice identité 4x4 avec un vecteur nul pour éviter tout offset avec les coordonnées des Terrains
-    glm::mat4 model = glm::scale(glm::mat4(1.0f), size);
+
+    glm::mat4 mat = glm::mat4(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
+    size = glm::vec3(6, 6, 6);
+
+    glm::mat4 model = glm::scale(mat, size);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram->ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
     VAOModel.Bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

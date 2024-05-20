@@ -75,13 +75,13 @@ int main() {
 
     // Cubes
     Cube* newCube1 = new Cube(glm::vec3(1.4, 4, 1), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
-    //cubes.push_back(newCube1);
+    cubes.push_back(newCube1);
     Cube* newCube2 = new Cube(glm::vec3(1, 3, 1), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
-    //cubes.push_back(newCube2);
+    cubes.push_back(newCube2);
     Cube* newCube3 = new Cube(glm::vec3(3, 4, 4), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
     cubes.push_back(newCube3);
     Cube* newCube4 = new Cube(glm::vec3(3, 4, 1), glm::vec3(1), true, &crateTex, 2.f, 0.5f);
-    //cubes.push_back(newCube4);
+    cubes.push_back(newCube4);
 
     Cube* raycastCube = new Cube(glm::vec3(0, 0, 0), glm::vec3(0.2), true, &crateTex, 2.f, 0.5f);
     cubes.push_back(raycastCube);
@@ -115,9 +115,9 @@ int main() {
 
         //On scale le topLeftCorner en fonction de la taille du terrain (scale)
         glm::vec3 topLeftCorner = glm::vec3(topLeftCoord[0] * scale.x, topLeftCoord[1] * scale.y, topLeftCoord[2] * scale.z);
-        //On d�finit le centre du terrain en fonction du topLeftCorner et du scale pour �viter les d�calages avec le rigidBody
+        //On definit le centre du terrain en fonction du topLeftCorner et du scale pour eviter les decalages avec le rigidBody
         glm::vec3 center = topLeftCorner + scale / 2.0f;
-        
+
         //On initialise le terrain et on le stocke dans le vecteur des terrains
         Terrain* newTerrain = new Terrain(terrain.path().string(), center, scale, false, nullptr, 50.0f, 0.5);
         terrains.push_back(newTerrain);
@@ -155,15 +155,14 @@ int main() {
         glm::vec3 center;
         if (verifVerticesBy5(vertices, 0)) {
             scale = glm::vec3(0, scale.y, scale.z);
-            center = glm::vec3(0, bottomLeftCorner.y + scale.y / 2.0f, bottomLeftCorner.z + scale.z / 2.0);
-        }
-        else if (verifVerticesBy5(vertices, 1)) {
-            scale = glm::vec3(scale.x, 0, scale.z);    //En soit, un mur avec un y a 0 est un sol ? (a creuser)
-            center = glm::vec3(bottomLeftCorner.x + scale.x / 2.0f, 0, bottomLeftCorner.z + scale.z / 2.0);
+            center = glm::vec3(vertices[0] * 6, bottomLeftCorner.y + scale.y / 2.0f, bottomLeftCorner.z + scale.z / 2.0);
+
+            std::cout << "center : " << center.x << " " << center.y << " " << center.z << std::endl;
+            std::cout << "scale : " << scale.x << " " << scale.y << " " << scale.z << std::endl;
         }
         else if (verifVerticesBy5(vertices, 2)) {   //Derniere verification non obligatoire
             scale = glm::vec3(scale.x, scale.y, 0);
-            center = glm::vec3(bottomLeftCorner.x + scale.x / 2.0f, bottomLeftCorner.y + scale.y / 2.0f, 0);
+            center = glm::vec3(bottomLeftCorner.x + scale.x / 2.0f, bottomLeftCorner.y + scale.y / 2.0f, vertices[2] * 6);
         }
 
         //On initialise le terrain et on le stocke dans le vecteur des terrains

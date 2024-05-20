@@ -17,7 +17,9 @@ public:
         float restitution = 0.1f, 
         bool movable = false);  // Constructor to set up the terrain data
 
-    ~Wall(); // Destructor for cleanup
+    glm::mat4 model;            // Model matrix of the wall
+
+    ~Wall();                    // Destructor for cleanup
 
     void Draw(Shader* shaderProgram, float dt) override; // Method to draw the terrain
 };
