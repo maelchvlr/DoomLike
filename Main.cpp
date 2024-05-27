@@ -63,6 +63,8 @@ int main() {
     // Create textures
     Texture dirtTex = Texture("ressources/textures/dirt.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
     Texture crateTex = Texture("ressources/textures/crate.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+    Texture wallTex = Texture("ressources/textures/wall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+    Texture floorTex = Texture("ressources/textures/floor.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 
     //Terrain initializer
     std::vector<Terrain*> terrains;
@@ -187,7 +189,7 @@ int main() {
     std::vector<glm::vec3> raycast;
 
     // Enemy
-    Enemy enemy(glm::vec3(5.0f, 1.0f, 5.0f), 2.0f);
+    Enemy enemy(glm::vec3(5.0f, 1.0f, 5.0f), 4.0f);
     bool enemyAlive = true;
 
     // Enable depth testing
@@ -205,7 +207,10 @@ int main() {
 
         // Render clearing
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+        // load an image for the background
+        glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
+
         glClearDepth(1.0f);
 
         // Use the shader program
@@ -232,9 +237,9 @@ int main() {
 
         // Draw the terrain(s)
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "color"), 0.0f, 0.0f, 1.0f);
-        dirtTex.texUnit(shaderProgram, "tex0", 0);
+        floorTex.texUnit(shaderProgram, "tex0", 0);
         glUniform1i(glGetUniformLocation(shaderProgram.ID, "useTexture"), 1);
-        dirtTex.Bind();
+        floorTex.Bind();
 
         for (auto terrain : terrains) {
             terrain->Draw(&shaderProgram, deltaTime);

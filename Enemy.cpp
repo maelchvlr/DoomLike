@@ -6,7 +6,7 @@
 Enemy::Enemy(glm::vec3 position, float detectionRadius)
     : Actor(position), detectionRadius(detectionRadius) 
 {
-    cube = new Cube(position, glm::vec3(0.1), false, nullptr, 10, 0, true);
+    cube = new Cube(position, glm::vec3(0.3), false, nullptr, 10, 0, true);
 }
 
 void Enemy::Update(float dt) 
